@@ -118,6 +118,8 @@ import {
 	fetchStory,
 	updateStory,
 	fetchDataSourceEntries,
+	fetchWorkFlowStages,
+	workFlowStageChange,
 } from "../utils/services";
 import { languageCodes } from "./../utils/language-codes";
 
@@ -166,8 +168,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -177,8 +179,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
 					height: 500,
 				},
@@ -192,9 +194,9 @@ export default {
 	methods: {
 		// to get the current story once app is loaded
 		processMessage(event) {
-			// console.log('event outside', event)
+			console.log('event outside', event)
 			if (event.data && event.data.action == "get-context") {
-				// console.log('event', event)
+				console.log('event', event)
 				this.loadingContext = false;
 				this.story = event.data.story;
 				this.currentLanguage =
@@ -526,6 +528,7 @@ export default {
 							this.successMessage();
 
 							if (index === this.requestedLanguagesForFieldLevel.length - 1) {
+								workFlowStageChange(this.spaceId, this.story.id, 295897)
 								window.open(
 									`${document.referrer}#!/me/spaces/${this.spaceId}/stories/0/0/${this.story.id}?update=true`
 								);
@@ -552,6 +555,9 @@ export default {
 						this.story.id,
 						this.availableLanguages[0].lang
 					);
+
+					let workflowStages = await fetchWorkFlowStages(this.spaceId);
+
 					let storyObject = updatedStory.storyObj;
 					let storyJson = this.removeUnwanted(
 						updatedStory.storyJSON,
@@ -565,6 +571,8 @@ export default {
 							? this.currentLanguage.split("-")[0].toUpperCase()
 							: "";
 					let extractedFieldsXML = this.generateXML(extractedFields); // converting json to xml
+
+					console.log('workFlow Stages', workflowStages);
 
 					if (this.modeOfTranslation === "FOLDER_LEVEL")
 						this.folderLevelTranslationRequest(

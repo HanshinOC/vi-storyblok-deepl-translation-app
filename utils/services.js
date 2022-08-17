@@ -172,6 +172,40 @@ export const fetchStory = async (spaceId, storyId, language) => {
 	return { storyObj, storyJSON, storyJSONWithLang };
 }
 
+export const fetchWorkFlowStages = async (spaceId) => {
+
+    const stages = await Storyblok.get(`spaces/${spaceId}/workflow_stages`, {})
+        .then(response => {
+            console.log(response.data.workflow_stages)
+            return response.data.workflow_stages;
+        }).catch(error => {
+            console.log(error)
+        })
+    console.log('stages', stages)
+    return stages;
+}
+
+export const workFlowStageChange = async (spaceId, storyId, workFlowId) => {
+
+    const stages = await Storyblok.post(
+        `spaces/${spaceId}/workflow_stage_changes`, {
+        "workflow_stage_change": {
+            "workflow_stage_id": workFlowId,
+            "story_id": storyId
+        }
+    })
+        .then((response) => {
+            return response;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    console.log('stages', stages)
+    return stages;
+}
+
+
+
 
 export const updateStory = async (spaceId, storyId, story, languageCode) => {
 	const response = await Storyblok.put(
