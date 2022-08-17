@@ -105,6 +105,26 @@
 					</el-row>
 				</div>
 				<div v-else v-loading="true"></div>
+				<footer>
+					<div>
+						Developed by
+						<a href="https://www.virtual-identity.com/" target="_blank"
+							><b>Virtual Identity AG,</b></a
+						>
+						a certified Storyblok Partner.
+					</div>
+					<div class="badge">
+						<a
+							href="https://github.com/virtualidentityag/vi-storyblok-deepl-translation-app"
+							target="_blank"
+						>
+							<img
+								src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"
+								alt="Open Source"
+							/>
+						</a>
+					</div>
+				</footer>
 			</el-card>
 		</div>
 	</div>
@@ -181,7 +201,7 @@ export default {
 					// tool: "virtual-identity-ag@auto-translations-app",
 					tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
-					height: 500,
+					height: 450,
 				},
 				"https://app.storyblok.com"
 			);
@@ -686,6 +706,35 @@ span {
 	clear: both;
 }
 .box-card {
-	width: 300px;
+	width: 100%;
+}
+.box-card footer {
+	padding: 5px 0px;
+	border-top: 1px solid #ebeef5;
+	box-sizing: border-box;
+	margin-top: 25px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+footer div {
+	font-size: 12px;
+}
+
+footer img {
+	width: 100px;
+}
+
+footer a {
+	text-decoration: none;
+	color: black;
+}
+
+.badge {
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+	height: 6vh;
 }
 </style>
