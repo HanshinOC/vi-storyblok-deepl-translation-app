@@ -2,7 +2,6 @@
 	<div class="bodyFontStyle">
 		<el-card class="box-card">
 			<div slot="header" class="clearfix">
-				<span>App Configuration</span>
 				<el-button
 					style="float: right"
 					type="primary"
