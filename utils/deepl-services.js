@@ -2,37 +2,19 @@
 import translate from 'deepl';
 import { Notification } from 'element-ui';
 
+
 const supportedLanguages = [
-	"BG",
-	"CS",
-	"DA",
-	"DE",
-	"EL",
-	"EN",
-	"EN-GB",
-	"EN-US",
-	"ES",
-	"ET",
-	"FI",
-	"FR",
-	"HU",
-	"ID",
-	"IT",
-	"JA",
-	"LT",
-	"LV",
-	"NL",
-	"PL",
-	"PT",
-	"PT-PT",
-	"PT-BR",
-	"RO",
-	"RU",
-	"SK",
-	"SL",
-	"SV",
-	"TR",
-	"ZH",
+	'DE',
+	'EN',
+	'FR',
+	'IT',
+	'JA',
+	'ES',
+	'NL',
+	'PL',
+	'PT',
+	'RU',
+	'ZH',
 ];
 
 export const transformLanguageString = (languageString) => languageString.split('-')[0].toUpperCase();
@@ -64,23 +46,13 @@ const returnErrorMessage = (statusCode) => {
 export const deepLTranslate = async (text, targetLanguage, sourceLanguage, deepLKey) => {
 	// console.log('text', text, targetLanguage, sourceLanguage);
 
-	let langCompatible = false
-	// const truncatedTargetLanguageString = transformLanguageString(targetLanguage);
-	let truncatedTargetLanguageString = targetLanguage.toUpperCase();
+	const truncatedTargetLanguageString = transformLanguageString(targetLanguage);
 	const truncatedSourceLanguageString = sourceLanguage !== "" ? transformLanguageString(sourceLanguage) : ""
 
 	// console.log('translation', truncatedTargetLanguageString, truncatedSourceLanguageString);
 
 	// if (isLanguageDeepLCompatible(truncatedSourceLanguageString) && isLanguageDeepLCompatible(truncatedTargetLanguageString)) {
 	if (isLanguageDeepLCompatible(truncatedTargetLanguageString)) {
-		langCompatible = true
-	}
-	else if (isLanguageDeepLCompatible(transformLanguageString(targetLanguage))) {
-		langCompatible = true
-		truncatedTargetLanguageString = transformLanguageString(targetLanguage);
-	}
-
-	if (langCompatible) {
 		try {
 			const response = await translate({
 				text,
