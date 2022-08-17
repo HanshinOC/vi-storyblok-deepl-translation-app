@@ -146,6 +146,8 @@ import ConfigurationScreen from "./../components/ConfigurationScreen.vue";
 import {
 	API_KEY_DATASOURCE_NAME,
 	API_KEY_INITIAL_VALUE,
+	FIELD_LEVEL,
+	FOLDER_LEVEL,
 	MODE_DATASOURCE_NAME,
 	MODE_INITIAL_VALUE,
 } from "../utils/constants";
@@ -275,8 +277,8 @@ export default {
 
 		updateTranslationMode(translationModeObj) {
 			if (
-				translationModeObj.mode.trim() !== "FOLDER_LEVEL" &&
-				translationModeObj.mode.trim() !== "FIELD_LEVEL"
+				translationModeObj.mode.trim() !== FOLDER_LEVEL &&
+				translationModeObj.mode.trim() !== FIELD_LEVEL
 			) {
 				this.invalidMode = true;
 			} else {
@@ -295,8 +297,8 @@ export default {
 		},
 
 		getTranslationModeName(mode) {
-			if (mode === "FOLDER_LEVEL") return "Folder Level";
-			else if (mode === "FIELD_LEVEL") return "Field Level";
+			if (mode === FOLDER_LEVEL) return "Folder Level";
+			else if (mode === FIELD_LEVEL) return "Field Level";
 			else return false;
 		},
 
@@ -593,7 +595,7 @@ export default {
 
 					console.log('workFlow Stages', workflowStages);
 
-					if (this.modeOfTranslation === "FOLDER_LEVEL")
+					if (this.modeOfTranslation === FOLDER_LEVEL)
 						this.folderLevelTranslationRequest(
 							storyObject,
 							storyJson,
