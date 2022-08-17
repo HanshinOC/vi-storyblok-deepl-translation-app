@@ -14,7 +14,6 @@
 		<div class="bodyFontStyle" v-if="!showConfigurationScreen">
 			<el-card class="box-card">
 				<div slot="header" class="clearfix">
-					<span>Auto Translate</span>
 					<el-button
 						style="float: right"
 						type="primary"
