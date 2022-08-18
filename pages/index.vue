@@ -137,8 +137,8 @@ import {
 	fetchStory,
 	updateStory,
 	fetchDataSourceEntries,
-	fetchWorkFlowStages,
-	workFlowStageChange,
+	// fetchWorkFlowStages,
+	// workFlowStageChange,
 } from "../utils/services";
 import { languageCodes } from "./../utils/language-codes";
 
@@ -203,7 +203,7 @@ export default {
 					// tool: "virtual-identity-ag@auto-translations-app",
 					tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
-					height: 450,
+					height: 500,
 				},
 				"https://app.storyblok.com"
 			);
@@ -465,7 +465,6 @@ export default {
 		async folderLevelTranslationRequest(
 			storyObject,
 			storyJson,
-			extractedFields,
 			extractedFieldsXML,
 			sourceLanguage
 		) {
@@ -480,12 +479,12 @@ export default {
 				let convertedXml = {
 					...this.convertXMLToJSON(
 						response.translations[0].text,
-						extractedFields
+						storyJson
 					),
 					language: this.requestedLanguagesForFolderLevel,
 					page: this.story.id + "",
 					text_nodes: JSON.parse(storyJson.text_nodes),
-					url: JSON.parse(storyJson.url),
+					url: storyJson.url,
 				};
 
 				storyObject = await updateStory(
@@ -496,7 +495,7 @@ export default {
 
 				if (storyObject) {
 					this.successMessage();
-
+					// workFlowStageChange(this.spaceId, this.story.id, 299627)
 					window.open(
 						`${document.referrer}#!/me/spaces/${this.spaceId}/stories/0/0/${this.story.id}?update=true`
 					);
@@ -549,7 +548,7 @@ export default {
 							this.successMessage();
 
 							if (index === this.requestedLanguagesForFieldLevel.length - 1) {
-								workFlowStageChange(this.spaceId, this.story.id, 295897)
+								// workFlowStageChange(this.spaceId, this.story.id, 299635)
 								window.open(
 									`${document.referrer}#!/me/spaces/${this.spaceId}/stories/0/0/${this.story.id}?update=true`
 								);
@@ -571,46 +570,53 @@ export default {
 				if (
 					!this.requestedLanguagesForFieldLevel.includes(this.currentLanguage)
 				) {
+
 					let updatedStory = await fetchStory(
 						this.spaceId,
 						this.story.id,
 						this.availableLanguages[0].lang
 					);
 
-					let workflowStages = await fetchWorkFlowStages(this.spaceId);
+					// let workflowStages = await fetchWorkFlowStages(this.spaceId);
 
 					let storyObject = updatedStory.storyObj;
-					let storyJson = this.removeUnwanted(
-						updatedStory.storyJSON,
-						updatedStory.storyJSONWithLang
-					);
-					let extractedFields = {
-						...this.extractingFields(storyJson, storyObject),
-					};
+
 					let sourceLanguage =
 						this.currentLanguage !== "Default Language"
 							? this.currentLanguage.split("-")[0].toUpperCase()
 							: "";
-					let extractedFieldsXML = this.generateXML(extractedFields); // converting json to xml
 
-					console.log('workFlow Stages', workflowStages);
+					// console.log('workFlow Stages', workflowStages);
 
-					if (this.modeOfTranslation === FOLDER_LEVEL)
+					if (this.modeOfTranslation === FOLDER_LEVEL) {
+
+						let extractedFields = {
+							...this.extractingFields(updatedStory.storyJSON, storyObject),
+						};
+
 						this.folderLevelTranslationRequest(
 							storyObject,
-							storyJson,
-							extractedFields,
-							extractedFieldsXML,
+							updatedStory.storyJSON,
+							this.generateXML(extractedFields), // converting json to xml
 							sourceLanguage
 						);
-					else
+					}
+					else {
+						let storyJson = this.removeUnwanted(
+							updatedStory.storyJSON,
+							updatedStory.storyJSONWithLang
+						);
+						let extractedFields = {
+							...this.extractingFields(storyJson, storyObject),
+						};
 						this.fieldLevelTranslationRequest(
 							storyObject,
 							storyJson,
 							extractedFields,
-							extractedFieldsXML,
+							this.generateXML(extractedFields), // converting json to xml
 							sourceLanguage
 						);
+					}
 				} else
 					this.customErrorMessage(
 						"Requested languages should not include source language"
