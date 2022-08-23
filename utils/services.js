@@ -1,4 +1,10 @@
-import { MODE_INITIAL_VALUE } from "./constants";
+import {
+	API_KEY_DATASOURCE_NAME, API_KEY_INITIAL_VALUE,
+	APP_DATASOURCE_NAME,
+	APP_DATASOURCE_SLUG,
+	MODE_DATASOURCE_NAME, MODE_INITIAL_VALUE,
+	WORKFLOW_STATUS_DATASOURCE_NAME, WORKFLOW_STATUS_INITIAL_VALUE
+} from "./constants";
 import Storyblok from "./Storyblok-config";
 
 export const fetchDataSources = async (spaceId, datasourceSlug) => {
@@ -37,30 +43,31 @@ export const getEntriesRequest = async (spaceId) => {
 }
 
 export const fetchDataSourceEntries = async (spaceId) => {
-	let dataSourceEntryValues = null
+	let dataSourceEntryValues = null;
 	let dataSourcesExistResult = undefined;
 
 	let datasources = [{
-		elementName: "Deepl-Api-key",
-		datasourceInitialValue: "Enter-Api-Key-Here",
-		hasFixedValue: false,
+		elementName: API_KEY_DATASOURCE_NAME,
+		datasourceInitialValue: API_KEY_INITIAL_VALUE,
 	}, {
-		elementName: "Mode-Of-Translation",
+		elementName: MODE_DATASOURCE_NAME,
 		datasourceInitialValue: MODE_INITIAL_VALUE,
-		hasFixedValue: true,
-	}]
+	}, {
+		elementName: WORKFLOW_STATUS_DATASOURCE_NAME,
+		datasourceInitialValue: WORKFLOW_STATUS_INITIAL_VALUE,
+	}];
 
 	let datasourceEntries = await getEntriesRequest(spaceId)
 
 	if (!datasourceEntries || datasourceEntries.data.datasource_entries.length !== datasources.length)
-		dataSourcesExistResult = await dataSourceAlreadyExists(datasourceEntries, "Auto Translation Configurations", datasources, "auto-translation-configurations", spaceId)
+		dataSourcesExistResult = await dataSourceAlreadyExists(datasourceEntries, APP_DATASOURCE_NAME, datasources, APP_DATASOURCE_SLUG, spaceId);
 
 	if (dataSourcesExistResult && dataSourcesExistResult.length > 0)
 		dataSourceEntryValues = dataSourcesExistResult;
 	else
 		dataSourceEntryValues = datasourceEntries?.data?.datasource_entries ?? null;
 
-	return dataSourceEntryValues
+	return dataSourceEntryValues;
 }
 
 const dataSourceAlreadyExists = async (entryKey, datasourceName, dataSourcesArray, datasourceSlug, spaceId) => {
@@ -84,7 +91,7 @@ const dataSourceAlreadyExists = async (entryKey, datasourceName, dataSourcesArra
 		let key = []
 
 		if (entryKey.data.datasource_entries.length > 0)
-			key = dataSourcesArray.filter(element => entryKey.data.datasource_entries.find(entry => element.elementName !== entry.name))
+			key = dataSourcesArray.filter(dataSourceElement => JSON.stringify(entryKey.data.datasource_entries).indexOf(dataSourceElement.elementName) === -1);
 		else
 			key = Array.from(dataSourcesArray)
 
@@ -111,7 +118,6 @@ export const createDataSource = async (spaceId, name, slug) => {
 			"slug": slug,
 		}
 	}).then(response => {
-		// console.log.response)
 		return response
 	}).catch(error => {
 		console.log(error)
@@ -128,7 +134,6 @@ export const createDataSourceEntry = async (spaceId, name, value, dataSourceId) 
 			"datasource_id": dataSourceId
 		}
 	}).then(response => {
-		// console.log.response)
 		return response
 	}).catch(error => {
 		console.log(error)
@@ -151,7 +156,6 @@ export const fetchStory = async (spaceId, storyId, language) => {
 		`spaces/${spaceId}/stories/${storyId}/export.json`, {}
 	)
 		.then((response) => {
-			// console.log."response of fetched stor", response);
 			return response.data;
 		})
 		.catch((error) => {
@@ -174,34 +178,32 @@ export const fetchStory = async (spaceId, storyId, language) => {
 
 export const fetchWorkFlowStages = async (spaceId) => {
 
-    const stages = await Storyblok.get(`spaces/${spaceId}/workflow_stages`, {})
-        .then(response => {
-            console.log(response.data.workflow_stages)
-            return response.data.workflow_stages;
-        }).catch(error => {
-            console.log(error)
-        })
-    console.log('stages', stages)
-    return stages;
+	const stages = await Storyblok.get(`spaces/${spaceId}/workflow_stages`, {})
+		.then(response => {
+			console.log(response.data.workflow_stages)
+			return response.data.workflow_stages;
+		}).catch(error => {
+			console.log(error)
+		})
+	return stages;
 }
 
 export const workFlowStageChange = async (spaceId, storyId, workFlowId) => {
 
-    const stages = await Storyblok.post(
-        `spaces/${spaceId}/workflow_stage_changes`, {
-        "workflow_stage_change": {
-            "workflow_stage_id": workFlowId,
-            "story_id": storyId
-        }
-    })
-        .then((response) => {
-            return response;
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    console.log('stages', stages)
-    return stages;
+	const stages = await Storyblok.post(
+		`spaces/${spaceId}/workflow_stage_changes`, {
+		"workflow_stage_change": {
+			"workflow_stage_id": workFlowId,
+			"story_id": storyId
+		}
+	})
+		.then((response) => {
+			return response;
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+	return stages;
 }
 
 

@@ -18,24 +18,43 @@
 				class="demo-ruleForm"
 			>
 				<el-col>
-					<el-form-item label="Deepl Api Key" required prop="apiKey">
-						<el-input v-model="ruleForm.apiKey"></el-input>
-					</el-form-item>
+					<el-row>
+						<el-form-item label="Deepl Api Key" required prop="apiKey">
+							<el-input v-model="ruleForm.apiKey"></el-input>
+						</el-form-item>
+					</el-row>
+					<el-row>
+						<el-form-item label="Translation Mode" required prop="modeOfTranslation">
+							<el-radio
+								v-model="ruleForm.modeOfTranslation"
+								:label="mode.value"
+								v-for="mode in ruleForm.translationModes"
+								:key="mode.value"
+							>
+								{{ mode.label }}
+							</el-radio>
+						</el-form-item>
+					</el-row>
+
 					<el-row>
 						<el-form-item
-							label="Translation Mode"
-							required
-							prop="modeOfTranslation"
-						></el-form-item>
-
-						<el-radio
-							v-model="ruleForm.modeOfTranslation"
-							:label="mode.value"
-							v-for="mode in ruleForm.translationModes"
-							:key="mode.value"
+							label="Workflow Status After Translation"
+							prop="workflowStatusId"
 						>
-							{{ mode.label }}
-						</el-radio>
+							<el-select
+								v-model="ruleForm.workflowStatusId"
+								placeholder="Select"
+								size="mini"
+							>
+								<el-option
+									v-for="item in ruleForm.workflowStages"
+									:key="item.id"
+									:label="item.name"
+									:value="item.id"
+								>
+								</el-option>
+							</el-select>
+						</el-form-item>
 					</el-row>
 
 					<el-form-item>
@@ -53,17 +72,20 @@
 </template>
 <script>
 import { Notification } from "element-ui";
-import { updateDataSourceEntries } from "../utils/services";
+import { fetchWorkFlowStages, updateDataSourceEntries } from "../utils/services";
 import {
 	FIELD_LEVEL,
 	FOLDER_LEVEL,
 	MODE_INITIAL_VALUE,
 	API_KEY_INITIAL_VALUE,
+	WORKFLOW_STATUS_INITIAL_VALUE,
+	API_KEY_DATASOURCE_NAME,
+	MODE_DATASOURCE_NAME,
 } from "../utils/constants";
 
 export default {
 	name: "ConfigurationScreen",
-	props: ["deeplKey", "mode", "deeplKeyObj", "modeObj"],
+	props: ["deeplKey", "deeplKeyObj", "mode", "modeObj", "workflowId", "workflowObj"],
 	data() {
 		return {
 			spaceId: this.$route.query.space_id,
@@ -71,8 +93,16 @@ export default {
 			ruleForm: {
 				apiKey: this.deeplKey === API_KEY_INITIAL_VALUE ? "" : this.deeplKey,
 				apiKeyObj: this.deeplKeyObj,
+
 				modeOfTranslation: this.mode === MODE_INITIAL_VALUE ? "" : this.mode,
 				modeOfTranslationObj: this.modeObj,
+
+				workflowStatusId: this.workflowId !== WORKFLOW_STATUS_INITIAL_VALUE ? parseInt(this.workflowId) : WORKFLOW_STATUS_INITIAL_VALUE,
+				workflowStatusObj: this.workflowObj,
+				workflowStages: [{ id: WORKFLOW_STATUS_INITIAL_VALUE, name: WORKFLOW_STATUS_INITIAL_VALUE }],
+
+				spaceId: this.$route.query.space_id,
+
 				translationModes: [
 					{ value: FIELD_LEVEL, label: "Field Level" },
 					{ value: FOLDER_LEVEL, label: "Folder Level" },
@@ -96,17 +126,28 @@ export default {
 			},
 		};
 	},
+	mounted() {
+		this.fetchStages()
+	},
 
 	methods: {
+		async fetchStages() {
+			this.ruleForm.workflowStages = this.ruleForm.workflowStages.concat(await fetchWorkFlowStages(this.spaceId))
+		},
 		disableUpdateBtn() {
 			if (
 				(this.ruleForm.apiKey !== this.deeplKey &&
 					this.ruleForm.apiKey !== "") ||
 				(this.ruleForm.modeOfTranslation !== this.mode &&
-					this.ruleForm.modeOfTranslation !== "")
-			)
+					this.ruleForm.modeOfTranslation !== "") ||
+				(this.ruleForm.workflowStatusId != this.workflowId)
+			) {
 				return false;
-			else return true;
+			}
+			else {
+				return true;
+			}
+
 		},
 
 		async handleSubmit(form) {
@@ -126,6 +167,13 @@ export default {
 							value: this.ruleForm.modeOfTranslation,
 						});
 
+
+					if (this.ruleForm.workflowStatusId !== this.workflowId)
+						updatedValues.push({
+							...this.ruleForm.workflowStatusObj,
+							value: this.ruleForm.workflowStatusId,
+						});
+
 					updatedValues.forEach(async (datasourceEntry) => {
 						let response = await updateDataSourceEntries(
 							this.spaceId,
@@ -135,15 +183,21 @@ export default {
 						if (response.status === 204) {
 							this.successMessage(datasourceEntry.name);
 
-							if (datasourceEntry.name === "Deepl-Api-key") {
+							if (datasourceEntry.name === API_KEY_DATASOURCE_NAME) {
 								this.$emit("updateApiKey", {
 									key: this.ruleForm.apiKey,
 									obj: this.ruleForm.apiKeyObj,
 								});
-							} else {
+							} else if (datasourceEntry.name === MODE_DATASOURCE_NAME) {
 								this.$emit("updateTranslationMode", {
 									mode: this.ruleForm.modeOfTranslation,
 									obj: this.ruleForm.modeOfTranslationObj,
+								});
+							}
+							else {
+								this.$emit("updateWorkFlowStatus", {
+									id: this.ruleForm.workflowStatusId,
+									obj: this.ruleForm.workflowStatusObj,
 								});
 							}
 						} else this.errorMessage();
@@ -178,12 +232,6 @@ export default {
 </script>
 
 <style>
-.el-row {
-	margin-bottom: 20px;
-}
-.el-row:last-child {
-	margin-bottom: 0;
-}
 .bodyFontStyle {
 	font-family: sans-serif;
 }
@@ -223,5 +271,8 @@ p {
 .error-text {
 	color: #f56c6c;
 	font-weight: bold;
+}
+.el-select-dropdown__item span {
+	font-family: sans-serif;
 }
 </style>
