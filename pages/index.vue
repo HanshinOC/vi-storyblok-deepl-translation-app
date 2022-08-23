@@ -202,8 +202,7 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					// tool: "virtual-identity-ag@auto-translations-app",
-					tool: "virtual-identity-ag@translations-backup-app",
+					tool: "virtual-identity-ag@auto-translations-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -213,8 +212,7 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					// tool: "virtual-identity-ag@auto-translations-app",
-					tool: "virtual-identity-ag@translations-backup-app",
+					tool: "virtual-identity-ag@auto-translations-app",
 					event: "heightChange",
 					height: 500,
 				},
