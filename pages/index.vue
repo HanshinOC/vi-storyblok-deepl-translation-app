@@ -65,7 +65,7 @@
 						<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
 					</p>
 
-					<el-row v-if="modeOfTranslation === FIELD_LEVEL">
+					<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
 						<p v-if="languagesAvailable">Translate Into: (required)</p>
 
 						<el-checkbox-group
