@@ -202,7 +202,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -212,9 +213,10 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
-					height: 500,
+					height: 550,
 				},
 				"https://app.storyblok.com"
 			);
@@ -678,7 +680,7 @@ export default {
 
 <style>
 .bodyFont {
-	font-family: sans-serif;
+	font-family: "Roboto", sans-serif;
 }
 
 .bodyFont .el-row {
@@ -689,10 +691,78 @@ export default {
 	margin-bottom: 0;
 }
 
+.el-alert--error.is-light {
+	background-color: #ffd7d5;
+	color: #1b243f;
+}
+.el-alert--error.is-light .el-alert__description {
+	color: #1b243f;
+}
+
+.el-form-item__label {
+	color: #1b243f;
+}
+
+.el-button {
+	display: inline-block;
+	line-height: 1;
+	white-space: nowrap;
+	cursor: pointer;
+	background: #00b3b0;
+	border: 1px solid #00b3b0;
+	-webkit-appearance: none;
+	text-align: center;
+	box-sizing: border-box;
+	outline: 0;
+	margin: 0;
+	transition: 0.1s;
+	font-weight: 500;
+}
+
+.el-button--primary:focus,
+.el-button--primary:hover {
+	background: #009f9c;
+	border-color: #00b3b0;
+	color: #fff;
+}
+
+.el-button--primary.is-active,
+.el-button--primary:active {
+	background: #00b3b0;
+	border-color: #c6e2ff;
+}
+
+.el-button.is-disabled,
+.el-button.is-disabled:focus,
+.el-button.is-disabled:hover {
+	cursor: not-allowed;
+	background-image: none;
+	border-color: #ebeef5;
+	color: #b1b5be;
+	background-color: #dfe3e8;
+}
+.el-checkbox {
+	color: #1b243f;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+	background-color: #00b3b0;
+	border: 1px solid #00b3b0;
+}
+.el-checkbox__input.is-checked + .el-checkbox__label {
+	color: #00b3b0;
+}
+.el-checkbox__inner:hover {
+	border-color: #00b3b0;
+}
+.el-checkbox__input.is-focus .el-checkbox__inner {
+	border-color: #00b3b0;
+}
+
 .el-notification__title {
 	font-weight: 700;
 	font-size: 16px;
-	color: #303133;
+	color: #1b243f;
 	margin: 0;
 	font-family: sans-serif;
 }
@@ -701,7 +771,7 @@ export default {
 	font-size: 14px;
 	line-height: 21px;
 	margin: 6px 0 0;
-	color: #606266;
+	color: #1b243f;
 	text-align: justify;
 	font-family: sans-serif;
 }
@@ -720,11 +790,27 @@ export default {
 		bottom 0.3s;
 	overflow: hidden;
 }
+.el-radio {
+	color: #1b243f;
+	margin-right: 20px;
+}
 
 .el-radio-button__inner,
 .el-radio-group {
-	display: block;
+	/* display: flex; */
 	margin-bottom: 2px;
+}
+
+.el-radio__input.is-checked .el-radio__inner {
+	border-color: #00b3b0;
+	background: #00b3b0;
+}
+
+.el-radio__input.is-checked + .el-radio__label {
+	color: #00b3b0;
+}
+.el-radio__inner:hover {
+	border-color: #00b3b0;
 }
 
 p,

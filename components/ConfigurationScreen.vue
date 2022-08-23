@@ -19,7 +19,7 @@
 			>
 				<el-col>
 					<el-row>
-						<el-form-item label="Deepl Api Key" required prop="apiKey">
+						<el-form-item label="Deepl Api Key" prop="apiKey">
 							<el-input v-model="ruleForm.apiKey"></el-input>
 						</el-form-item>
 					</el-row>
@@ -203,7 +203,7 @@ export default {
 						} else this.errorMessage();
 					});
 				} else {
-					console.log("error submit!!", fieldErrorObj);
+					// console.log("error submit!!", fieldErrorObj);
 					return false;
 				}
 			});
@@ -235,10 +235,32 @@ export default {
 .bodyFontStyle {
 	font-family: sans-serif;
 }
+
+.el-input.is-active .el-input__inner,
+.el-input__inner:focus {
+	border-color: #00b3b0;
+	outline: 0;
+}
+.el-select .el-input__inner:focus {
+	border-color: #00b3b0;
+}
+
+.el-range-editor.is-active,
+.el-range-editor.is-active:hover,
+.el-select .el-input.is-focus .el-input__inner {
+	border-color: #00b3b0;
+}
+.el-select-dropdown__item.selected {
+	color: #00b3b0;
+	font-weight: 700;
+}
+.el-input__inner {
+	color: #1b243f;
+}
 .el-notification__title {
 	font-weight: 700;
 	font-size: 16px;
-	color: #303133;
+	color: #1b243f;
 	margin: 0;
 	font-family: sans-serif;
 }
@@ -246,7 +268,7 @@ export default {
 	font-size: 14px;
 	line-height: 21px;
 	margin: 6px 0 0;
-	color: #606266;
+	color: #1b243f;
 	text-align: justify;
 	font-family: sans-serif;
 }
@@ -266,7 +288,7 @@ export default {
 }
 p {
 	font-size: 14px;
-	color: #606266;
+	/* color: #606266; */
 }
 .error-text {
 	color: #f56c6c;
