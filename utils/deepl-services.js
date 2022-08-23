@@ -68,7 +68,6 @@ export const deepLTranslate = async (text, targetLanguage, sourceLanguage, deepL
 	let truncatedTargetLanguageString = targetLanguage.toUpperCase();
 	const truncatedSourceLanguageString = sourceLanguage !== "" ? transformLanguageString(sourceLanguage) : ""
 
-	// if (isLanguageDeepLCompatible(truncatedSourceLanguageString) && isLanguageDeepLCompatible(truncatedTargetLanguageString)) {
 	if (isLanguageDeepLCompatible(truncatedTargetLanguageString)) {
 		langCompatible = true
 	}
