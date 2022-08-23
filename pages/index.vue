@@ -5,16 +5,18 @@
 				@close="switchTabs"
 				@updateApiKey="updateApiKey"
 				@updateTranslationMode="updateTranslationMode"
+				@updateWorkFlowStatus="updateWorkFlowStatus"
 				:deeplKey="apiKey"
 				:mode="modeOfTranslation"
+				:workflowId="workFlowStatusId"
 				:deeplKeyObj="apiKeyObj"
 				:modeObj="modeOfTranslationObj"
+				:workflowObj="workFlowStatusObj"
 			/>
 		</div>
-		<div class="bodyFontStyle" v-if="!showConfigurationScreen">
-			<el-card class="box-card">
+		<div v-if="!showConfigurationScreen">
+			<el-card class="box-card bodyFont">
 				<div slot="header" class="clearfix">
-					<span>Auto Translate</span>
 					<el-button
 						style="float: right"
 						type="primary"
@@ -23,7 +25,7 @@
 						>Edit Configuration</el-button
 					>
 				</div>
-				<div class="bodyFontStyle" v-if="!loadingContext">
+				<div v-if="!loadingContext">
 					<el-row v-if="!languagesAvailable">
 						<el-alert
 							title="No languages found"
@@ -63,7 +65,7 @@
 						<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
 					</p>
 
-					<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
+					<el-row v-if="modeOfTranslation === FIELD_LEVEL">
 						<p v-if="languagesAvailable">Translate Into: (required)</p>
 
 						<el-checkbox-group
@@ -106,6 +108,26 @@
 					</el-row>
 				</div>
 				<div v-else v-loading="true"></div>
+				<footer>
+					<div>
+						Developed by
+						<a href="https://www.virtual-identity.com/" target="_blank"
+							><b>Virtual Identity AG,</b></a
+						>
+						a certified Storyblok Partner.
+					</div>
+					<div class="badge">
+						<a
+							href="https://github.com/virtualidentityag/vi-storyblok-deepl-translation-app"
+							target="_blank"
+						>
+							<img
+								src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"
+								alt="Open Source"
+							/>
+						</a>
+					</div>
+				</footer>
 			</el-card>
 		</div>
 	</div>
@@ -118,6 +140,7 @@ import {
 	fetchStory,
 	updateStory,
 	fetchDataSourceEntries,
+	workFlowStageChange,
 } from "../utils/services";
 import { languageCodes } from "./../utils/language-codes";
 
@@ -125,8 +148,12 @@ import ConfigurationScreen from "./../components/ConfigurationScreen.vue";
 import {
 	API_KEY_DATASOURCE_NAME,
 	API_KEY_INITIAL_VALUE,
+	FIELD_LEVEL,
+	FOLDER_LEVEL,
 	MODE_DATASOURCE_NAME,
 	MODE_INITIAL_VALUE,
+	WORKFLOW_STATUS_DATASOURCE_NAME,
+	WORKFLOW_STATUS_INITIAL_VALUE,
 } from "../utils/constants";
 
 export default {
@@ -138,20 +165,29 @@ export default {
 		return {
 			showConfigurationScreen: false,
 			story: undefined,
-			apiKeyObj: undefined,
-			modeOfTranslationObj: undefined,
 			loadingContext: true,
-			invalidKey: true,
-			invalidMode: true,
 			languagesAvailable: false,
 			currentLanguage: "",
+
 			apiKey: "",
+			apiKeyObj: undefined,
+			invalidKey: true,
+
+			workFlowStatusId: "",
+			workFlowStatusObj: undefined,
+			changeWorkFlowStatus: false,
+
 			modeOfTranslation: "",
+			modeOfTranslationObj: undefined,
+			invalidMode: true,
+
 			availableLanguages: [],
 			requestedLanguagesForFieldLevel: [],
 			requestedLanguagesForFolderLevel: "",
 			translationMode: "",
 			spaceId: this.$route.query.space_id,
+
+
 		};
 	},
 
@@ -167,7 +203,6 @@ export default {
 				{
 					action: "tool-changed",
 					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -178,7 +213,6 @@ export default {
 				{
 					action: "tool-changed",
 					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
 					height: 500,
 				},
@@ -192,9 +226,9 @@ export default {
 	methods: {
 		// to get the current story once app is loaded
 		processMessage(event) {
-			// console.log('event outside', event)
+			console.log('event outside', event)
 			if (event.data && event.data.action == "get-context") {
-				// console.log('event', event)
+				console.log('event', event)
 				this.loadingContext = false;
 				this.story = event.data.story;
 				this.currentLanguage =
@@ -219,11 +253,13 @@ export default {
 				const translationModeObj = dataSourceObj.find(
 					(obj) => obj.name === MODE_DATASOURCE_NAME
 				);
+				const workFlowStatusObj = dataSourceObj.find(
+					(obj) => obj.name === WORKFLOW_STATUS_DATASOURCE_NAME
+				);
 
-				const invalidKeyValue =
-					deeplKeyObj.value !== API_KEY_INITIAL_VALUE ? false : true;
-				const invalidModeValue =
-					translationModeObj.value !== MODE_INITIAL_VALUE ? false : true;
+				const invalidKeyValue = deeplKeyObj.value !== API_KEY_INITIAL_VALUE ? false : true;
+				const invalidModeValue = translationModeObj.value !== MODE_INITIAL_VALUE ? false : true;
+				const changeWorkFlowStatusValue = workFlowStatusObj.value === WORKFLOW_STATUS_INITIAL_VALUE ? false : true;
 
 				this.apiKey = deeplKeyObj.value;
 				this.apiKeyObj = deeplKeyObj;
@@ -233,8 +269,11 @@ export default {
 				this.modeOfTranslationObj = translationModeObj;
 				this.invalidMode = invalidModeValue;
 
-				this.showConfigurationScreen =
-					invalidKeyValue || invalidModeValue ? true : false;
+				this.workFlowStatusId = workFlowStatusObj.value;
+				this.workFlowStatusObj = workFlowStatusObj;
+				this.changeWorkFlowStatus = changeWorkFlowStatusValue;
+
+				this.showConfigurationScreen = invalidKeyValue || invalidModeValue ? true : false;
 			}
 		},
 
@@ -252,18 +291,29 @@ export default {
 			this.apiKeyObj = { ...apiValues.obj };
 		},
 
-		updateTranslationMode(translationModeObj) {
-			if (
-				translationModeObj.mode.trim() !== "FOLDER_LEVEL" &&
-				translationModeObj.mode.trim() !== "FIELD_LEVEL"
-			) {
-				this.invalidMode = true;
-			} else {
-				this.invalidMode = false;
-			}
+		updateWorkFlowStatus(workFlowStatusValues) {
+			if (workFlowStatusValues.key !== WORKFLOW_STATUS_INITIAL_VALUE)
+				this.changeWorkFlowStatus = true;
+			else
+				this.changeWorkFlowStatus = false;
 
-			this.modeOfTranslation = translationModeObj.mode;
-			this.modeOfTranslationObj = { ...translationModeObj.obj };
+			this.workFlowStatusId = workFlowStatusValues.id;
+			this.workFlowStatusObj = { ...workFlowStatusValues.obj };
+		},
+
+		updateTranslationMode(translationModeValues) {
+			if (translationModeValues.mode.trim() !== FOLDER_LEVEL && translationModeValues.mode.trim() !== FIELD_LEVEL)
+				this.invalidMode = true;
+			else
+				this.invalidMode = false;
+
+			this.modeOfTranslation = translationModeValues.mode;
+			this.modeOfTranslationObj = { ...translationModeValues.obj };
+		},
+
+		updateWorkFlowStatusOfStory() {
+			if (this.changeWorkFlowStatus)
+				workFlowStageChange(this.spaceId, this.story.id, this.workFlowStatusId);
 		},
 
 		// return language name for the given code
@@ -274,8 +324,8 @@ export default {
 		},
 
 		getTranslationModeName(mode) {
-			if (mode === "FOLDER_LEVEL") return "Folder Level";
-			else if (mode === "FIELD_LEVEL") return "Field Level";
+			if (mode === FOLDER_LEVEL) return "Folder Level";
+			else if (mode === FIELD_LEVEL) return "Field Level";
 			else return false;
 		},
 
@@ -334,13 +384,8 @@ export default {
 
 				if (extracted.length > 1) {
 					for (let _keys in storyObject.content) {
-						if (storyObject.content._uid === extracted[0]) {
-							// if the field is directly inside content object
-							if (
-								storyObject.content.component === extracted[1] &&
-								storyObject.content[extracted[2]]
-							) {
-								// just checking the component and field name for it
+						if (storyObject.content._uid === extracted[0]) { // if the field is directly inside content object
+							if (storyObject.content.component === extracted[1] && storyObject.content[extracted[2]]) { // just checking the component and field name for it
 								Object.assign(translatableContents, {
 									[`${keys}`]:
 										storyObject.content[`${extracted[2]}${languageStr}`],
@@ -442,7 +487,6 @@ export default {
 		async folderLevelTranslationRequest(
 			storyObject,
 			storyJson,
-			extractedFields,
 			extractedFieldsXML,
 			sourceLanguage
 		) {
@@ -457,12 +501,12 @@ export default {
 				let convertedXml = {
 					...this.convertXMLToJSON(
 						response.translations[0].text,
-						extractedFields
+						storyJson
 					),
 					language: this.requestedLanguagesForFolderLevel,
 					page: this.story.id + "",
 					text_nodes: JSON.parse(storyJson.text_nodes),
-					url: JSON.parse(storyJson.url),
+					url: storyJson.url,
 				};
 
 				storyObject = await updateStory(
@@ -473,6 +517,8 @@ export default {
 
 				if (storyObject) {
 					this.successMessage();
+
+					this.updateWorkFlowStatusOfStory();
 
 					window.open(
 						`${document.referrer}#!/me/spaces/${this.spaceId}/stories/0/0/${this.story.id}?update=true`
@@ -526,6 +572,9 @@ export default {
 							this.successMessage();
 
 							if (index === this.requestedLanguagesForFieldLevel.length - 1) {
+
+								this.updateWorkFlowStatusOfStory();
+
 								window.open(
 									`${document.referrer}#!/me/spaces/${this.spaceId}/stories/0/0/${this.story.id}?update=true`
 								);
@@ -547,41 +596,50 @@ export default {
 				if (
 					!this.requestedLanguagesForFieldLevel.includes(this.currentLanguage)
 				) {
+
 					let updatedStory = await fetchStory(
 						this.spaceId,
 						this.story.id,
 						this.availableLanguages[0].lang
 					);
+
 					let storyObject = updatedStory.storyObj;
-					let storyJson = this.removeUnwanted(
-						updatedStory.storyJSON,
-						updatedStory.storyJSONWithLang
-					);
-					let extractedFields = {
-						...this.extractingFields(storyJson, storyObject),
-					};
+
 					let sourceLanguage =
 						this.currentLanguage !== "Default Language"
 							? this.currentLanguage.split("-")[0].toUpperCase()
 							: "";
-					let extractedFieldsXML = this.generateXML(extractedFields); // converting json to xml
 
-					if (this.modeOfTranslation === "FOLDER_LEVEL")
+
+					if (this.modeOfTranslation === FOLDER_LEVEL) {
+
+						let extractedFields = {
+							...this.extractingFields(updatedStory.storyJSON, storyObject),
+						};
+
 						this.folderLevelTranslationRequest(
 							storyObject,
-							storyJson,
-							extractedFields,
-							extractedFieldsXML,
+							updatedStory.storyJSON,
+							this.generateXML(extractedFields), // converting json to xml
 							sourceLanguage
 						);
-					else
+					}
+					else {
+						let storyJson = this.removeUnwanted(
+							updatedStory.storyJSON,
+							updatedStory.storyJSONWithLang
+						);
+						let extractedFields = {
+							...this.extractingFields(storyJson, storyObject),
+						};
 						this.fieldLevelTranslationRequest(
 							storyObject,
 							storyJson,
 							extractedFields,
-							extractedFieldsXML,
+							this.generateXML(extractedFields), // converting json to xml
 							sourceLanguage
 						);
+					}
 				} else
 					this.customErrorMessage(
 						"Requested languages should not include source language"
@@ -589,6 +647,7 @@ export default {
 			} else
 				this.customErrorMessage("Please select atleast one target language");
 		},
+
 		successMessage() {
 			Notification({
 				title: "Success",
@@ -618,15 +677,18 @@ export default {
 </script>
 
 <style>
-.el-row {
-	margin-bottom: 20px;
-}
-.el-row:last-child {
-	margin-bottom: 0;
-}
-.bodyFontStyle {
+.bodyFont {
 	font-family: sans-serif;
 }
+
+.bodyFont .el-row {
+	margin-bottom: 20px;
+}
+
+.bodyFont .el-row:last-child {
+	margin-bottom: 0;
+}
+
 .el-notification__title {
 	font-weight: 700;
 	font-size: 16px;
@@ -634,6 +696,7 @@ export default {
 	margin: 0;
 	font-family: sans-serif;
 }
+
 .el-notification__content {
 	font-size: 14px;
 	line-height: 21px;
@@ -642,6 +705,7 @@ export default {
 	text-align: justify;
 	font-family: sans-serif;
 }
+
 .el-notification {
 	display: flex;
 	width: 270px;
@@ -656,29 +720,63 @@ export default {
 		bottom 0.3s;
 	overflow: hidden;
 }
+
 .el-radio-button__inner,
 .el-radio-group {
 	display: block;
 	margin-bottom: 2px;
 }
+
 p,
 span {
-	/* font-size: smaller; */
 	font-size: 14px;
 }
 .error-text {
 	color: #f56c6c;
 	font-weight: bold;
 }
+
 .clearfix:before,
 .clearfix:after {
 	display: table;
 	content: "";
 }
+
 .clearfix:after {
 	clear: both;
 }
+
 .box-card {
-	width: 300px;
+	width: 100%;
+}
+
+.box-card footer {
+	padding: 5px 0px;
+	border-top: 1px solid #ebeef5;
+	box-sizing: border-box;
+	margin-top: 25px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+footer div {
+	font-size: 12px;
+}
+
+footer img {
+	width: 100px;
+}
+
+footer a {
+	text-decoration: none;
+	color: black;
+}
+
+.badge {
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+	height: 6vh;
 }
 </style>
