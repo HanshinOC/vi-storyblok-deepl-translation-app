@@ -278,6 +278,19 @@ export default {
 	color: rgb(45, 180, 125);
 }
 
+.el-message--error {
+	background-color: #ffd7d5;
+	border-color: #ffd7d5;
+}
+
+.el-message--error .el-message__content {
+	color: #1b243f;
+}
+
+.el-message .el-icon-error {
+	color: rgb(255, 97, 89);
+}
+
 p {
 	font-size: 14px;
 }
