@@ -704,19 +704,8 @@ export default {
 }
 
 .el-button {
-	display: inline-block;
-	line-height: 1;
-	white-space: nowrap;
-	cursor: pointer;
 	background: #00b3b0;
 	border: 1px solid #00b3b0;
-	-webkit-appearance: none;
-	text-align: center;
-	box-sizing: border-box;
-	outline: 0;
-	margin: 0;
-	transition: 0.1s;
-	font-weight: 500;
 }
 
 .el-button--primary:focus,
