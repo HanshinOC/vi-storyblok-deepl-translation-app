@@ -134,7 +134,6 @@
 </template>
 
 <script>
-import { Notification } from "element-ui";
 import { deepLTranslate } from "./../utils/deepl-services";
 import {
 	fetchStory,
@@ -743,37 +742,6 @@ export default {
 	border-color: #00b3b0;
 }
 
-.el-notification__title {
-	font-weight: 700;
-	font-size: 16px;
-	color: #1b243f;
-	margin: 0;
-	font-family: sans-serif;
-}
-
-.el-notification__content {
-	font-size: 14px;
-	line-height: 21px;
-	margin: 6px 0 0;
-	color: #1b243f;
-	text-align: justify;
-	font-family: sans-serif;
-}
-
-.el-notification {
-	display: flex;
-	width: 270px;
-	padding: 14px 26px 14px 13px;
-	border-radius: 8px;
-	box-sizing: border-box;
-	border: 1px solid #ebeef5;
-	position: fixed;
-	background-color: #fff;
-	box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
-	transition: opacity 0.3s, transform 0.3s, left 0.3s, right 0.3s, top 0.4s,
-		bottom 0.3s;
-	overflow: hidden;
-}
 .el-radio {
 	color: #1b243f;
 	margin-right: 20px;
