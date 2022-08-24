@@ -647,30 +647,25 @@ export default {
 						"Requested languages should not include source language"
 					);
 			} else
-				this.customErrorMessage("Please select atleast one target language");
+				this.customErrorMessage("Please select at least one target language");
 		},
 
 		successMessage() {
-			Notification({
-				title: "Success",
+			this.$message({
 				message: "Translation Successful!",
-				type: "success",
+				type: 'success',
 			});
 		},
 		customErrorMessage(_message) {
-			Notification({
-				title: "Error",
+			this.$message.error({
 				message: _message,
-				type: "error",
+				type: 'error',
 			});
 		},
 		languageErrorMessage(lang) {
-			Notification({
-				title: "Error",
-				message: `Error occurred for language ${this.getlangName(
-					lang
-				)}. Please try again later.`,
-				type: "error",
+			this.$message.error({
+				message: `Error occurred for language ${this.getlangName(lang)}. Please try again later.`,
+				type: 'error',
 				duration: 20000,
 			});
 		},
