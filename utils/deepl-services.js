@@ -51,7 +51,7 @@ const returnErrorMessage = (statusCode) => {
 	const errorIndex = errorMessages.findIndex((errorObj) => errorObj.code === statusCode);
 
 	if (errorIndex !== -1 && errorMessages[errorIndex]) {
-		Message.error({ message: errorMessages[errorIndex].message, type: 'error', duration: 0 });
+		Message.error({ message: errorMessages[errorIndex].message, type: 'error' });
 		return undefined
 	}
 
