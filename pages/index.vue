@@ -55,15 +55,19 @@
 						</el-alert>
 					</el-row>
 
-					<p class="less-prominent" v-if="languagesAvailable">
-						Content will be translated from:
-						{{ getlangName(currentLanguage) }}
-					</p>
+					<el-row>
+						<span class="less-prominent" v-if="languagesAvailable">
+							Content will be translated from: {{ getlangName(currentLanguage) }}
+						</span>
 
-					<p class="less-prominent" v-if="getTranslationModeName(modeOfTranslation)">
-						Translation Mode is set to:
-						<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
-					</p>
+						<span
+							class="less-prominent"
+							v-if="getTranslationModeName(modeOfTranslation)"
+						>
+							Translation Mode is set to:
+							<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
+						</span>
+					</el-row>
 
 					<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
 						<p v-if="languagesAvailable">Translate Into: (required)</p>
@@ -810,7 +814,7 @@ footer img {
 
 footer a {
 	text-decoration: none;
-	color: black;
+	color: #1b243f;
 }
 
 .badge {
