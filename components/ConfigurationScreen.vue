@@ -71,7 +71,7 @@
 	</div>
 </template>
 <script>
-import { Notification } from "element-ui";
+
 import { fetchWorkFlowStages, updateDataSourceEntries } from "../utils/services";
 import {
 	FIELD_LEVEL,
@@ -216,17 +216,15 @@ export default {
 		},
 
 		successMessage(dataSource) {
-			Notification({
-				title: "Success",
+			this.$message({
 				message: `${dataSource} updated successfully!`,
-				type: "success",
+				type: 'success',
 			});
 		},
 		errorMessage(_message) {
-			Notification({
-				title: "Error",
+			this.$message.error({
 				message: _message ?? "Something went wrong, try again later.",
-				type: "error",
+				type: 'error',
 			});
 		},
 	},
@@ -259,6 +257,23 @@ export default {
 .el-input__inner {
 	color: #1b243f;
 }
+.el-message {
+	min-width: 89%;
+	font-family: "Roboto", SANS-SERIF;
+}
+
+.el-message--success {
+	background-color: #caecde;
+	border-color: #caecde;
+}
+.el-message--success .el-message__content {
+	color: #1b243f;
+}
+
+.el-message .el-icon-success {
+	color: rgb(45, 180, 125);
+}
+
 .el-notification__title {
 	font-weight: 700;
 	font-size: 16px;
@@ -290,7 +305,6 @@ export default {
 }
 p {
 	font-size: 14px;
-	/* color: #606266; */
 }
 .error-text {
 	color: #f56c6c;
