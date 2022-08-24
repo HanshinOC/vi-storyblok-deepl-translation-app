@@ -749,7 +749,6 @@ export default {
 
 .el-radio-button__inner,
 .el-radio-group {
-	/* display: flex; */
 	margin-bottom: 2px;
 }
 
