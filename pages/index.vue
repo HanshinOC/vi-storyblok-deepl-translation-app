@@ -55,12 +55,12 @@
 						</el-alert>
 					</el-row>
 
-					<p v-if="languagesAvailable">
+					<p class="less-prominent" v-if="languagesAvailable">
 						Content will be translated from:
 						{{ getlangName(currentLanguage) }}
 					</p>
 
-					<p v-if="getTranslationModeName(modeOfTranslation)">
+					<p class="less-prominent" v-if="getTranslationModeName(modeOfTranslation)">
 						Translation Mode is set to:
 						<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
 					</p>
@@ -811,6 +811,11 @@ export default {
 }
 .el-radio__inner:hover {
 	border-color: #00b3b0;
+}
+
+.less-prominent {
+	font-size: 11px !important;
+	color: #606266;
 }
 
 p,
