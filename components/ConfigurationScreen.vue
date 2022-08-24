@@ -174,14 +174,16 @@ export default {
 							value: this.ruleForm.workflowStatusId,
 						});
 
-					updatedValues.forEach(async (datasourceEntry) => {
+					updatedValues.forEach(async (datasourceEntry, index) => {
 						let response = await updateDataSourceEntries(
 							this.spaceId,
 							datasourceEntry
 						);
 
 						if (response.status === 204) {
-							this.successMessage(datasourceEntry.name);
+
+							if (index === updatedValues.length - 1)
+								this.successMessage('Configuration updated.');
 
 							switch (datasourceEntry.name) {
 								case API_KEY_DATASOURCE_NAME:
@@ -203,7 +205,9 @@ export default {
 									});
 							}
 
-						} else this.errorMessage();
+						}
+						else
+							this.errorMessage();
 					});
 				} else {
 					return false;
@@ -215,9 +219,9 @@ export default {
 			this.$emit("close");
 		},
 
-		successMessage(dataSource) {
+		successMessage(message) {
 			this.$message({
-				message: `${dataSource} updated successfully!`,
+				message: `${message}`,
 				type: 'success',
 			});
 		},
