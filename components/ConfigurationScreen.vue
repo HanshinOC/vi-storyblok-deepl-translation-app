@@ -233,7 +233,7 @@ export default {
 
 <style>
 .bodyFontStyle {
-	font-family: sans-serif;
+	font-family: "Roboto", sans-serif;
 }
 
 .el-input.is-active .el-input__inner,
