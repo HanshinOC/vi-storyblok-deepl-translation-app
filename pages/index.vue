@@ -227,9 +227,7 @@ export default {
 	methods: {
 		// to get the current story once app is loaded
 		processMessage(event) {
-			console.log('event outside', event)
 			if (event.data && event.data.action == "get-context") {
-				console.log('event', event)
 				this.loadingContext = false;
 				this.story = event.data.story;
 				this.currentLanguage =
