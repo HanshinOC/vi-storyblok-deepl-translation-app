@@ -183,27 +183,29 @@ export default {
 						if (response.status === 204) {
 							this.successMessage(datasourceEntry.name);
 
-							if (datasourceEntry.name === API_KEY_DATASOURCE_NAME) {
-								this.$emit("updateApiKey", {
-									key: this.ruleForm.apiKey,
-									obj: this.ruleForm.apiKeyObj,
-								});
-							} else if (datasourceEntry.name === MODE_DATASOURCE_NAME) {
-								this.$emit("updateTranslationMode", {
-									mode: this.ruleForm.modeOfTranslation,
-									obj: this.ruleForm.modeOfTranslationObj,
-								});
+							switch (datasourceEntry.name) {
+								case API_KEY_DATASOURCE_NAME:
+									this.$emit("updateApiKey", {
+										key: this.ruleForm.apiKey,
+										obj: this.ruleForm.apiKeyObj,
+									});
+									break;
+								case MODE_DATASOURCE_NAME:
+									this.$emit("updateTranslationMode", {
+										mode: this.ruleForm.modeOfTranslation,
+										obj: this.ruleForm.modeOfTranslationObj,
+									});
+									break;
+								default:
+									this.$emit("updateWorkFlowStatus", {
+										id: this.ruleForm.workflowStatusId,
+										obj: this.ruleForm.workflowStatusObj,
+									});
 							}
-							else {
-								this.$emit("updateWorkFlowStatus", {
-									id: this.ruleForm.workflowStatusId,
-									obj: this.ruleForm.workflowStatusObj,
-								});
-							}
+
 						} else this.errorMessage();
 					});
 				} else {
-					// console.log("error submit!!", fieldErrorObj);
 					return false;
 				}
 			});
