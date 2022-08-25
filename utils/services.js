@@ -18,7 +18,6 @@ export const fetchDataSources = async (spaceId, datasourceSlug) => {
 }
 
 export const updateDataSourceEntries = async (spaceId, datasource_entry) => {
-
 	let response = await Storyblok.put(`spaces/${spaceId}/datasource_entries/${datasource_entry.id}`, {
 		"datasource_entry": datasource_entry
 	}).then(response => {
@@ -38,8 +37,7 @@ export const getEntriesRequest = async (spaceId) => {
 		}).catch(error => {
 			console.log(error)
 		})
-
-	return entry
+	return entry;
 }
 
 export const fetchDataSourceEntries = async (spaceId) => {
@@ -122,7 +120,6 @@ export const createDataSource = async (spaceId, name, slug) => {
 	}).catch(error => {
 		console.log(error)
 	})
-
 	return newDataSource
 }
 
@@ -177,10 +174,8 @@ export const fetchStory = async (spaceId, storyId, language) => {
 }
 
 export const fetchWorkFlowStages = async (spaceId) => {
-
 	const stages = await Storyblok.get(`spaces/${spaceId}/workflow_stages`, {})
 		.then(response => {
-			console.log(response.data.workflow_stages)
 			return response.data.workflow_stages;
 		}).catch(error => {
 			console.log(error)
@@ -189,7 +184,6 @@ export const fetchWorkFlowStages = async (spaceId) => {
 }
 
 export const workFlowStageChange = async (spaceId, storyId, workFlowId) => {
-
 	const stages = await Storyblok.post(
 		`spaces/${spaceId}/workflow_stage_changes`, {
 		"workflow_stage_change": {

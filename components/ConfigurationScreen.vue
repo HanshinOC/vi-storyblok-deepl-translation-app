@@ -19,7 +19,7 @@
 			>
 				<el-col>
 					<el-row>
-						<el-form-item label="Deepl Api Key" required prop="apiKey">
+						<el-form-item label="Deepl Api Key" prop="apiKey">
 							<el-input v-model="ruleForm.apiKey"></el-input>
 						</el-form-item>
 					</el-row>
@@ -71,7 +71,7 @@
 	</div>
 </template>
 <script>
-import { Notification } from "element-ui";
+
 import { fetchWorkFlowStages, updateDataSourceEntries } from "../utils/services";
 import {
 	FIELD_LEVEL,
@@ -174,36 +174,42 @@ export default {
 							value: this.ruleForm.workflowStatusId,
 						});
 
-					updatedValues.forEach(async (datasourceEntry) => {
+					updatedValues.forEach(async (datasourceEntry, index) => {
 						let response = await updateDataSourceEntries(
 							this.spaceId,
 							datasourceEntry
 						);
 
 						if (response.status === 204) {
-							this.successMessage(datasourceEntry.name);
 
-							if (datasourceEntry.name === API_KEY_DATASOURCE_NAME) {
-								this.$emit("updateApiKey", {
-									key: this.ruleForm.apiKey,
-									obj: this.ruleForm.apiKeyObj,
-								});
-							} else if (datasourceEntry.name === MODE_DATASOURCE_NAME) {
-								this.$emit("updateTranslationMode", {
-									mode: this.ruleForm.modeOfTranslation,
-									obj: this.ruleForm.modeOfTranslationObj,
-								});
+							if (index === updatedValues.length - 1)
+								this.successMessage('Configuration(s) updated.');
+
+							switch (datasourceEntry.name) {
+								case API_KEY_DATASOURCE_NAME:
+									this.$emit("updateApiKey", {
+										key: this.ruleForm.apiKey,
+										obj: this.ruleForm.apiKeyObj,
+									});
+									break;
+								case MODE_DATASOURCE_NAME:
+									this.$emit("updateTranslationMode", {
+										mode: this.ruleForm.modeOfTranslation,
+										obj: this.ruleForm.modeOfTranslationObj,
+									});
+									break;
+								default:
+									this.$emit("updateWorkFlowStatus", {
+										id: this.ruleForm.workflowStatusId,
+										obj: this.ruleForm.workflowStatusObj,
+									});
 							}
-							else {
-								this.$emit("updateWorkFlowStatus", {
-									id: this.ruleForm.workflowStatusId,
-									obj: this.ruleForm.workflowStatusObj,
-								});
-							}
-						} else this.errorMessage();
+
+						}
+						else
+							this.errorMessage();
 					});
 				} else {
-					console.log("error submit!!", fieldErrorObj);
 					return false;
 				}
 			});
@@ -213,18 +219,16 @@ export default {
 			this.$emit("close");
 		},
 
-		successMessage(dataSource) {
-			Notification({
-				title: "Success",
-				message: `${dataSource} updated successfully!`,
-				type: "success",
+		successMessage(message) {
+			this.$message({
+				message: `${message}`,
+				type: 'success',
 			});
 		},
 		errorMessage(_message) {
-			Notification({
-				title: "Error",
+			this.$message.error({
 				message: _message ?? "Something went wrong, try again later.",
-				type: "error",
+				type: 'error',
 			});
 		},
 	},
@@ -233,40 +237,62 @@ export default {
 
 <style>
 .bodyFontStyle {
-	font-family: sans-serif;
+	font-family: "Roboto", sans-serif;
 }
-.el-notification__title {
+
+.el-input.is-active .el-input__inner,
+.el-input__inner:focus {
+	border-color: #00b3b0;
+	outline: 0;
+}
+.el-select .el-input__inner:focus {
+	border-color: #00b3b0;
+}
+
+.el-range-editor.is-active,
+.el-range-editor.is-active:hover,
+.el-select .el-input.is-focus .el-input__inner {
+	border-color: #00b3b0;
+}
+.el-select-dropdown__item.selected {
+	color: #00b3b0;
 	font-weight: 700;
-	font-size: 16px;
-	color: #303133;
-	margin: 0;
-	font-family: sans-serif;
 }
-.el-notification__content {
-	font-size: 14px;
-	line-height: 21px;
-	margin: 6px 0 0;
-	color: #606266;
-	text-align: justify;
-	font-family: sans-serif;
+.el-input__inner {
+	color: #1b243f;
 }
-.el-notification {
-	display: flex;
-	width: 270px;
-	padding: 14px 26px 14px 13px;
-	border-radius: 8px;
-	box-sizing: border-box;
-	border: 1px solid #ebeef5;
-	position: fixed;
-	background-color: #fff;
-	box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
-	transition: opacity 0.3s, transform 0.3s, left 0.3s, right 0.3s, top 0.4s,
-		bottom 0.3s;
-	overflow: hidden;
+.el-message {
+	min-width: 89%;
+	font-family: "Roboto", SANS-SERIF;
 }
+
+.el-message--success {
+	background-color: #caecde;
+	border-color: #caecde;
+}
+.el-message--success .el-message__content {
+	color: #1b243f;
+}
+
+.el-message .el-icon-success {
+	color: rgb(45, 180, 125);
+}
+
+.el-message--error {
+	background-color: #ffd7d5;
+	border-color: #ffd7d5;
+}
+
+.el-message--error .el-message__content {
+	color: #1b243f;
+}
+
+.el-message .el-icon-error {
+	color: rgb(255, 97, 89);
+}
+
 p {
 	font-size: 14px;
-	color: #606266;
 }
 .error-text {
 	color: #f56c6c;

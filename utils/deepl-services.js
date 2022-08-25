@@ -1,6 +1,5 @@
-/* eslint-disable compat/compat */
 import translate from 'deepl';
-import { Notification } from 'element-ui';
+import { Message } from 'element-ui';
 
 const supportedLanguages = [
 	"BG",
@@ -36,7 +35,6 @@ const supportedLanguages = [
 ];
 
 export const transformLanguageString = (languageString) => languageString.split('-')[0].toUpperCase();
-
 export const isLanguageDeepLCompatible = (language) => supportedLanguages.indexOf(language) !== -1;
 
 const errorMessages = [
@@ -53,22 +51,20 @@ const returnErrorMessage = (statusCode) => {
 	const errorIndex = errorMessages.findIndex((errorObj) => errorObj.code === statusCode);
 
 	if (errorIndex !== -1 && errorMessages[errorIndex]) {
-		Notification.error({ title: 'Error', message: errorMessages[errorIndex].message });
-		return undefined;
+		Message.error({ message: errorMessages[errorIndex].message, type: 'error' });
+		return undefined
 	}
 
-	Notification.error({ title: 'Error', message: 'Something went wrong.. Please try again in a bit.' });
-	return undefined;
+	Message.error({ message: 'Something went wrong.. Please try again in a bit.', type: 'error' });
+	return undefined
 };
 
 export const deepLTranslate = async (text, targetLanguage, sourceLanguage, deepLKey) => {
-
 
 	let langCompatible = false
 	let truncatedTargetLanguageString = targetLanguage.toUpperCase();
 	const truncatedSourceLanguageString = sourceLanguage !== "" ? transformLanguageString(sourceLanguage) : ""
 
-	// if (isLanguageDeepLCompatible(truncatedSourceLanguageString) && isLanguageDeepLCompatible(truncatedTargetLanguageString)) {
 	if (isLanguageDeepLCompatible(truncatedTargetLanguageString)) {
 		langCompatible = true
 	}

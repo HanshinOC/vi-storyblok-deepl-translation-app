@@ -55,15 +55,19 @@
 						</el-alert>
 					</el-row>
 
-					<p v-if="languagesAvailable">
-						Content will be translated from:
-						{{ getlangName(currentLanguage) }}
-					</p>
+					<el-row>
+						<span class="less-prominent" v-if="languagesAvailable">
+							Content will be translated from: {{ getlangName(currentLanguage) }}
+						</span>
 
-					<p v-if="getTranslationModeName(modeOfTranslation)">
-						Translation Mode is set to:
-						<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
-					</p>
+						<span
+							class="less-prominent"
+							v-if="getTranslationModeName(modeOfTranslation)"
+						>
+							Translation Mode is set to:
+							<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
+						</span>
+					</el-row>
 
 					<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
 						<p v-if="languagesAvailable">Translate Into: (required)</p>
@@ -134,7 +138,6 @@
 </template>
 
 <script>
-import { Notification } from "element-ui";
 import { deepLTranslate } from "./../utils/deepl-services";
 import {
 	fetchStory,
@@ -214,7 +217,7 @@ export default {
 					action: "tool-changed",
 					tool: "virtual-identity-ag@auto-translations-app",
 					event: "heightChange",
-					height: 500,
+					height: 550,
 				},
 				"https://app.storyblok.com"
 			);
@@ -226,9 +229,7 @@ export default {
 	methods: {
 		// to get the current story once app is loaded
 		processMessage(event) {
-			console.log('event outside', event)
 			if (event.data && event.data.action == "get-context") {
-				console.log('event', event)
 				this.loadingContext = false;
 				this.story = event.data.story;
 				this.currentLanguage =
@@ -645,30 +646,25 @@ export default {
 						"Requested languages should not include source language"
 					);
 			} else
-				this.customErrorMessage("Please select atleast one target language");
+				this.customErrorMessage("Please select at least one target language");
 		},
 
 		successMessage() {
-			Notification({
-				title: "Success",
+			this.$message({
 				message: "Translation Successful!",
-				type: "success",
+				type: 'success',
 			});
 		},
 		customErrorMessage(_message) {
-			Notification({
-				title: "Error",
+			this.$message.error({
 				message: _message,
-				type: "error",
+				type: 'error',
 			});
 		},
 		languageErrorMessage(lang) {
-			Notification({
-				title: "Error",
-				message: `Error occurred for language ${this.getlangName(
-					lang
-				)}. Please try again later.`,
-				type: "error",
+			this.$message.error({
+				message: `Error occurred for language ${this.getlangName(lang)}. Please try again later.`,
+				type: 'error',
 				duration: 20000,
 			});
 		},
@@ -678,7 +674,7 @@ export default {
 
 <style>
 .bodyFont {
-	font-family: sans-serif;
+	font-family: "Roboto", sans-serif;
 }
 
 .bodyFont .el-row {
@@ -689,42 +685,88 @@ export default {
 	margin-bottom: 0;
 }
 
-.el-notification__title {
-	font-weight: 700;
-	font-size: 16px;
-	color: #303133;
-	margin: 0;
-	font-family: sans-serif;
+.el-alert--error.is-light {
+	background-color: #ffd7d5;
+	color: #1b243f;
+}
+.el-alert--error.is-light .el-alert__description {
+	color: #1b243f;
 }
 
-.el-notification__content {
-	font-size: 14px;
-	line-height: 21px;
-	margin: 6px 0 0;
-	color: #606266;
-	text-align: justify;
-	font-family: sans-serif;
+.el-form-item__label {
+	color: #1b243f;
 }
 
-.el-notification {
-	display: flex;
-	width: 270px;
-	padding: 14px 26px 14px 13px;
-	border-radius: 8px;
-	box-sizing: border-box;
-	border: 1px solid #ebeef5;
-	position: fixed;
-	background-color: #fff;
-	box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
-	transition: opacity 0.3s, transform 0.3s, left 0.3s, right 0.3s, top 0.4s,
-		bottom 0.3s;
-	overflow: hidden;
+.el-button {
+	background: #00b3b0;
+	border: 1px solid #00b3b0;
+}
+
+.el-button--primary:focus,
+.el-button--primary:hover {
+	background: #009f9c;
+	border-color: #00b3b0;
+	color: #fff;
+}
+
+.el-button--primary.is-active,
+.el-button--primary:active {
+	background: #00b3b0;
+	border-color: #c6e2ff;
+}
+
+.el-button.is-disabled,
+.el-button.is-disabled:focus,
+.el-button.is-disabled:hover {
+	cursor: not-allowed;
+	background-image: none;
+	border-color: #ebeef5;
+	color: #b1b5be;
+	background-color: #dfe3e8;
+}
+.el-checkbox {
+	color: #1b243f;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+	background-color: #00b3b0;
+	border: 1px solid #00b3b0;
+}
+.el-checkbox__input.is-checked + .el-checkbox__label {
+	color: #00b3b0;
+}
+.el-checkbox__inner:hover {
+	border-color: #00b3b0;
+}
+.el-checkbox__input.is-focus .el-checkbox__inner {
+	border-color: #00b3b0;
+}
+
+.el-radio {
+	color: #1b243f;
+	margin-right: 20px;
 }
 
 .el-radio-button__inner,
 .el-radio-group {
-	display: block;
 	margin-bottom: 2px;
+}
+
+.el-radio__input.is-checked .el-radio__inner {
+	border-color: #00b3b0;
+	background: #00b3b0;
+}
+
+.el-radio__input.is-checked + .el-radio__label {
+	color: #00b3b0;
+}
+.el-radio__inner:hover {
+	border-color: #00b3b0;
+}
+
+.less-prominent {
+	font-size: 11px !important;
+	color: #606266;
 }
 
 p,
@@ -770,7 +812,7 @@ footer img {
 
 footer a {
 	text-decoration: none;
-	color: black;
+	color: #1b243f;
 }
 
 .badge {
