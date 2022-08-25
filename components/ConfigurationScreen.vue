@@ -183,7 +183,7 @@ export default {
 						if (response.status === 204) {
 
 							if (index === updatedValues.length - 1)
-								this.successMessage('Configuration updated.');
+								this.successMessage('Configuration(s) updated.');
 
 							switch (datasourceEntry.name) {
 								case API_KEY_DATASOURCE_NAME:
