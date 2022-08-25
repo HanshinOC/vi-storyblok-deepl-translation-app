@@ -176,7 +176,6 @@ export const fetchStory = async (spaceId, storyId, language) => {
 export const fetchWorkFlowStages = async (spaceId) => {
 	const stages = await Storyblok.get(`spaces/${spaceId}/workflow_stages`, {})
 		.then(response => {
-			console.log(response.data.workflow_stages)
 			return response.data.workflow_stages;
 		}).catch(error => {
 			console.log(error)
