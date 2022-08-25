@@ -113,12 +113,14 @@
 				</div>
 				<div v-else v-loading="true"></div>
 				<footer>
-					<div>
-						Developed by
-						<a href="https://www.virtual-identity.com/" target="_blank"
-							><b>Virtual Identity AG,</b></a
-						>
-						a certified Storyblok Partner.
+					<div id="footer-text">
+						<span>
+							Developed by
+							<a href="https://www.virtual-identity.com/" target="_blank"
+								>Virtual Identity AG,</a
+							>
+							a certified Storyblok Partner.
+						</span>
 					</div>
 					<div class="badge">
 						<a
@@ -804,8 +806,15 @@ span {
 	justify-content: space-between;
 }
 
-footer div {
+footer span {
 	font-size: 12px;
+	color: #00000099;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+#footer-text {
+	margin-top: 24px;
 }
 
 footer img {
@@ -814,13 +823,13 @@ footer img {
 
 footer a {
 	text-decoration: none;
-	color: #1b243f;
+	font-weight: 700;
+	color: #00000099;
 }
 
 .badge {
 	display: flex;
 	align-items: flex-end;
-	justify-content: flex-end;
 	height: 6vh;
 }
 </style>
