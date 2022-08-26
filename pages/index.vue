@@ -56,21 +56,28 @@
 					</el-row>
 
 					<el-row>
-						<span class="less-prominent" v-if="languagesAvailable">
-							Content will be translated from: {{ getlangName(currentLanguage) }}
-						</span>
-
-						<span
-							class="less-prominent"
-							v-if="getTranslationModeName(modeOfTranslation)"
-						>
-							Translation Mode is set to:
-							<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
-						</span>
+						<p class="less-prominent label" v-if="languagesAvailable">
+							Content will be translated from:
+						</p>
+						<p class="less-prominent" v-if="languagesAvailable">
+							{{ getlangName(currentLanguage) }}
+						</p>
 					</el-row>
 
+					<p
+						class="less-prominent label"
+						v-if="getTranslationModeName(modeOfTranslation)"
+					>
+						Translation Mode is set to:
+					</p>
+					<p class="less-prominent" v-if="getTranslationModeName(modeOfTranslation)">
+						{{ getTranslationModeName(modeOfTranslation) }}
+					</p>
+
 					<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
-						<p v-if="languagesAvailable">Translate Into: (required)</p>
+						<p class="less-prominent required label" v-if="languagesAvailable">
+							Translate Into
+						</p>
 
 						<el-checkbox-group
 							v-for="locale in availableLanguages"
@@ -85,7 +92,9 @@
 					</el-row>
 
 					<el-row v-else>
-						<p v-if="languagesAvailable">Translate Into: (required)</p>
+						<p class="less-prominent required label" v-if="languagesAvailable">
+							Translate Into
+						</p>
 
 						<el-radio-group
 							v-for="locale in availableLanguages"
@@ -753,7 +762,7 @@ export default {
 
 .el-radio-button__inner,
 .el-radio-group {
-	margin-bottom: 2px;
+	width: 100%;
 }
 
 .el-radio__input.is-checked .el-radio__inner {
@@ -767,10 +776,37 @@ export default {
 .el-radio__inner:hover {
 	border-color: #00b3b0;
 }
+.label.required::after {
+	content: "*";
+	color: #00b3b0;
+	margin-left: 4px;
+}
+.el-form-item.is-required:not(.is-no-asterisk)
+	.el-form-item__label-wrap
+	> .el-form-item__label:before,
+.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label:after {
+	content: "*";
+	color: #00b3b0;
+	margin-left: 4px;
+}
+.el-form-item.is-required:not(.is-no-asterisk)
+	.el-form-item__label-wrap
+	> .el-form-item__label:before,
+.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label:before {
+	content: "";
+	color: #f56c6c;
+	margin: 0px;
+}
 
 .less-prominent {
-	font-size: 11px !important;
-	color: #606266;
+	font-size: 14px !important;
+	line-height: 7px;
+	color: #000000;
+	font-weight: 400;
+}
+
+.label {
+	font-weight: 600;
 }
 
 p,
