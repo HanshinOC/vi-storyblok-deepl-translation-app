@@ -757,7 +757,7 @@ export default {
 
 .el-radio {
 	color: #1b243f;
-	margin-right: 20px;
+	/* margin-right: 20px; */
 }
 
 .el-radio-button__inner,
@@ -765,17 +765,30 @@ export default {
 	width: 100%;
 }
 
-.el-radio__input.is-checked .el-radio__inner {
-	border-color: #00b3b0;
-	background: #00b3b0;
+.el-radio__label {
+	color: #000000 !important;
+}
+.el-radio__input.is-checked {
+	color: #00b3b0;
 }
 
-.el-radio__input.is-checked + .el-radio__label {
-	color: #00b3b0;
+.el-radio__inner {
+	width: 18px;
+	height: 18px;
 }
 .el-radio__inner:hover {
 	border-color: #00b3b0;
 }
+.el-radio__input.is-checked .el-radio__inner {
+	border-color: #00b3b0;
+	background: #fff;
+}
+.el-radio__inner::after {
+	width: 10px;
+	height: 10px;
+	background-color: #00b3b0 !important;
+}
+
 .label.required::after {
 	content: "*";
 	color: #00b3b0;
