@@ -100,7 +100,7 @@
 
 				<el-row>
 					<el-col :span="12">
-						<el-button type="primary" size="mini" v-on:click="switchTabs"
+						<el-button type="plain" size="mini" v-on:click="switchTabs"
 							>Edit Configuration</el-button
 						>
 					</el-col>
@@ -707,17 +707,33 @@ export default {
 }
 
 .el-button {
-	background: #00b3b0;
-	border: 1px solid #00b3b0;
 	width: 100%;
 	border-radius: 6px;
+	color: #fff;
+}
+
+.el-button--plain {
+	background: #fff;
+	border: 1px solid #00b3b0;
+	color: #00b3b0;
+}
+
+.el-button--plain:focus,
+.el-button--plain:hover {
+	background: #fff;
+	border: 1px solid #00b3b0;
+	color: #00b3b0;
+}
+
+.el-button--primary {
+	background: #00b3b0;
+	border: 1px solid #00b3b0;
 }
 
 .el-button--primary:focus,
 .el-button--primary:hover {
-	background: #009f9c;
+	background: #00b3b0;
 	border-color: #00b3b0;
-	color: #fff;
 }
 
 .el-button--primary.is-active,
@@ -759,7 +775,6 @@ export default {
 
 .el-radio {
 	color: #1b243f;
-	/* margin-right: 20px; */
 }
 
 .el-radio-button__inner,
