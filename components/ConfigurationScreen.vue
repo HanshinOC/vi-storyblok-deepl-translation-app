@@ -243,6 +243,9 @@ export default {
 	border-color: #00b3b0;
 	outline: 0;
 }
+.el-select {
+	width: 100%;
+}
 .el-select .el-input__inner:focus {
 	border-color: #00b3b0;
 }
