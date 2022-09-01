@@ -262,9 +262,11 @@ export default {
 .el-input__inner {
 	color: #1b243f;
 }
+
 .el-message {
-	min-width: 89%;
+	min-width: 100%;
 	font-family: "Roboto", SANS-SERIF;
+	border-radius: 6px;
 }
 
 .el-message--success {
@@ -272,11 +274,11 @@ export default {
 	border-color: #caecde;
 }
 
+.el-message .el-icon-success,
+.el-message--error .el-message__content,
+.el-message--success .el-message__content,
+.el-message .el-icon-error,
 .el-message .el-icon-success {
-	color: #1b243f;
-	font-weight: 600;
-}
-.el-message--success .el-message__content {
 	color: #1b243f;
 	font-weight: 600;
 }
@@ -286,21 +288,10 @@ export default {
 	border-color: #ffd7d5;
 }
 
-.el-message--error .el-message__content {
-	color: #1b243f;
-}
-
-.el-message .el-icon-error {
-	color: rgb(255, 97, 89);
-}
-
 p {
 	font-size: 14px;
 }
-.error-text {
-	color: #f56c6c;
-	font-weight: bold;
-}
+
 .el-select-dropdown__item span {
 	font-family: sans-serif;
 }
