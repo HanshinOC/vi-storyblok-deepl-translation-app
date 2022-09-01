@@ -676,7 +676,6 @@ export default {
 			this.$message.error({
 				message: `Error occurred for language ${this.getlangName(lang)}. Please try again later.`,
 				type: 'error',
-				duration: 20000,
 			});
 		},
 	},
@@ -702,6 +701,10 @@ export default {
 
 .el-icon-error:before {
 	content: "\e6c9" !important;
+}
+
+.el-alert {
+	border-radius: 6px;
 }
 
 .el-alert--error.is-light {
