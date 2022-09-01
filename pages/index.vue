@@ -18,6 +18,7 @@
 			<div v-if="!loadingContext">
 				<el-row v-if="!languagesAvailable">
 					<el-alert
+						show-icon
 						title="No languages found"
 						type="error"
 						description="Please setup translation mode and add languages to use the application. 
@@ -28,6 +29,7 @@
 				</el-row>
 				<el-row v-show="invalidKey">
 					<el-alert
+						show-icon
 						title="Invalid key."
 						type="error"
 						description="Please enter a valid DeepL api key in app configuration."
@@ -37,6 +39,7 @@
 				</el-row>
 				<el-row v-show="invalidMode">
 					<el-alert
+						show-icon
 						title="Invalid Translation Mode."
 						type="error"
 						description="Please select a valid translation mode from app configuration."
@@ -691,6 +694,14 @@ export default {
 
 .bodyFont .el-row:last-child {
 	margin-bottom: 0;
+}
+
+.el-icon-success:before {
+	content: "\e720" !important;
+}
+
+.el-icon-error:before {
+	content: "\e6c9" !important;
 }
 
 .el-alert--error.is-light {
