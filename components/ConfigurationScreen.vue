@@ -1,73 +1,71 @@
 <template>
 	<div class="bodyFontStyle">
-		<el-card class="box-card">
-			<div slot="header" class="clearfix">
-				<el-button
-					style="float: right"
-					type="primary"
-					size="mini"
-					v-on:click="closeSettings"
-					>Cancel</el-button
-				>
-			</div>
-			<el-form
-				:rules="rules"
-				:model="ruleForm"
-				ref="ruleForm"
-				size="mini"
-				class="demo-ruleForm"
-			>
-				<el-col>
-					<el-row>
-						<el-form-item label="Deepl Api Key" prop="apiKey">
-							<el-input v-model="ruleForm.apiKey"></el-input>
-						</el-form-item>
-					</el-row>
-					<el-row>
-						<el-form-item label="Translation Mode" required prop="modeOfTranslation">
-							<el-radio
-								v-model="ruleForm.modeOfTranslation"
-								:label="mode.value"
-								v-for="mode in ruleForm.translationModes"
-								:key="mode.value"
-							>
-								{{ mode.label }}
-							</el-radio>
-						</el-form-item>
-					</el-row>
-
-					<el-row>
-						<el-form-item
-							label="Workflow Status After Translation"
-							prop="workflowStatusId"
-						>
-							<el-select
-								v-model="ruleForm.workflowStatusId"
-								placeholder="Select"
-								size="mini"
-							>
-								<el-option
-									v-for="item in ruleForm.workflowStages"
-									:key="item.id"
-									:label="item.name"
-									:value="item.id"
-								>
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-row>
-
-					<el-form-item>
-						<el-button
-							type="primary"
-							@click="handleSubmit('ruleForm')"
-							:disabled="disableUpdateBtn()"
-							>Update</el-button
-						>
+		<el-form
+			:rules="rules"
+			:model="ruleForm"
+			ref="ruleForm"
+			size="mini"
+			class="demo-ruleForm"
+		>
+			<el-col>
+				<el-row>
+					<el-form-item label="Deepl Api Key" prop="apiKey">
+						<el-input v-model="ruleForm.apiKey"></el-input>
 					</el-form-item>
-				</el-col>
-			</el-form>
-		</el-card>
+				</el-row>
+				<el-row>
+					<el-form-item label="Translation Mode" required prop="modeOfTranslation">
+						<el-radio
+							v-model="ruleForm.modeOfTranslation"
+							:label="mode.value"
+							v-for="mode in ruleForm.translationModes"
+							:key="mode.value"
+						>
+							{{ mode.label }}
+						</el-radio>
+					</el-form-item>
+				</el-row>
+
+				<el-row>
+					<el-form-item
+						label="Workflow Status After Translation"
+						prop="workflowStatusId"
+					>
+						<el-select
+							v-model="ruleForm.workflowStatusId"
+							placeholder="Select"
+							size="mini"
+						>
+							<el-option
+								v-for="item in ruleForm.workflowStages"
+								:key="item.id"
+								:label="item.name"
+								:value="item.id"
+							>
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-row>
+
+				<el-form-item>
+					<el-row>
+						<el-col :span="12">
+							<el-button type="plain" size="mini" v-on:click="closeSettings"
+								>Cancel</el-button
+							>
+						</el-col>
+						<el-col :span="10" :offset="2">
+							<el-button
+								type="primary"
+								@click="handleSubmit('ruleForm')"
+								:disabled="disableUpdateBtn()"
+								>Update</el-button
+							>
+						</el-col>
+					</el-row>
+				</el-form-item>
+			</el-col>
+		</el-form>
 	</div>
 </template>
 <script>

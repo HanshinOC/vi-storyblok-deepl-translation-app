@@ -775,6 +775,7 @@ export default {
 
 .el-radio {
 	color: #1b243f;
+	width: 100%;
 }
 
 .el-radio-button__inner,
