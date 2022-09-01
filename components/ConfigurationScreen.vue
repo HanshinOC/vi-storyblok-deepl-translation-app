@@ -54,7 +54,7 @@
 								>Cancel</el-button
 							>
 						</el-col>
-						<el-col :span="10" :offset="2">
+						<el-col :span="11" :offset="1">
 							<el-button
 								type="primary"
 								@click="handleSubmit('ruleForm')"

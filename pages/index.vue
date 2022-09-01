@@ -704,6 +704,7 @@ export default {
 
 .el-form-item__label {
 	color: #1b243f;
+	font-weight: 600;
 }
 
 .el-button {
