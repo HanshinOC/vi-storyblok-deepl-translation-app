@@ -14,101 +14,97 @@
 				:workflowObj="workFlowStatusObj"
 			/>
 		</div>
-		<div v-if="!showConfigurationScreen">
-			<el-card class="box-card bodyFont">
-				<div slot="header" class="clearfix">
-					<el-button
-						style="float: right"
-						type="primary"
-						size="mini"
-						v-on:click="switchTabs"
-						>Edit Configuration</el-button
-					>
-				</div>
-				<div v-if="!loadingContext">
-					<el-row v-if="!languagesAvailable">
-						<el-alert
-							title="No languages found"
-							type="error"
-							description="Please setup translation mode and add languages to use the application. 
+		<div class="bodyFont" v-if="!showConfigurationScreen">
+			<div v-if="!loadingContext">
+				<el-row v-if="!languagesAvailable">
+					<el-alert
+						title="No languages found"
+						type="error"
+						description="Please setup translation mode and add languages to use the application. 
           For more info visit: https://www.storyblok.com/docs/guide/in-depth/internationalization"
-							:closable="false"
-						>
-						</el-alert>
-					</el-row>
-					<el-row v-show="invalidKey">
-						<el-alert
-							title="Invalid key."
-							type="error"
-							description="Please enter a valid DeepL api key in app configuration."
-							:closable="false"
-						>
-						</el-alert>
-					</el-row>
-					<el-row v-show="invalidMode">
-						<el-alert
-							title="Invalid Translation Mode."
-							type="error"
-							description="Please select a valid translation mode from app configuration."
-							:closable="false"
-						>
-						</el-alert>
-					</el-row>
-
-					<el-row>
-						<p class="less-prominent label" v-if="languagesAvailable">
-							Content will be translated from:
-						</p>
-						<p class="less-prominent" v-if="languagesAvailable">
-							{{ getlangName(currentLanguage) }}
-						</p>
-					</el-row>
-
-					<p
-						class="less-prominent label"
-						v-if="getTranslationModeName(modeOfTranslation)"
+						:closable="false"
 					>
-						Translation Mode is set to:
+					</el-alert>
+				</el-row>
+				<el-row v-show="invalidKey">
+					<el-alert
+						title="Invalid key."
+						type="error"
+						description="Please enter a valid DeepL api key in app configuration."
+						:closable="false"
+					>
+					</el-alert>
+				</el-row>
+				<el-row v-show="invalidMode">
+					<el-alert
+						title="Invalid Translation Mode."
+						type="error"
+						description="Please select a valid translation mode from app configuration."
+						:closable="false"
+					>
+					</el-alert>
+				</el-row>
+
+				<el-row>
+					<p class="less-prominent label" v-if="languagesAvailable">
+						Content will be translated from:
 					</p>
-					<p class="less-prominent" v-if="getTranslationModeName(modeOfTranslation)">
-						{{ getTranslationModeName(modeOfTranslation) }}
+					<p class="less-prominent" v-if="languagesAvailable">
+						{{ getlangName(currentLanguage) }}
+					</p>
+				</el-row>
+
+				<p
+					class="less-prominent label"
+					v-if="getTranslationModeName(modeOfTranslation)"
+				>
+					Translation Mode is set to:
+				</p>
+				<p class="less-prominent" v-if="getTranslationModeName(modeOfTranslation)">
+					{{ getTranslationModeName(modeOfTranslation) }}
+				</p>
+
+				<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
+					<p class="less-prominent required label" v-if="languagesAvailable">
+						Translate Into
 					</p>
 
-					<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
-						<p class="less-prominent required label" v-if="languagesAvailable">
-							Translate Into
-						</p>
+					<el-checkbox-group
+						v-for="locale in availableLanguages"
+						:disabled="invalidKey || invalidMode"
+						:key="locale.lang"
+						v-model="requestedLanguagesForFieldLevel"
+					>
+						<el-checkbox :label="locale.lang">
+							{{ getAvailableLanguagesName(locale.lang) }}
+						</el-checkbox>
+					</el-checkbox-group>
+				</el-row>
 
-						<el-checkbox-group
-							v-for="locale in availableLanguages"
-							:disabled="invalidKey || invalidMode"
-							:key="locale.lang"
-							v-model="requestedLanguagesForFieldLevel"
+				<el-row v-else>
+					<p class="less-prominent required label" v-if="languagesAvailable">
+						Translate Into
+					</p>
+
+					<el-radio-group
+						v-for="locale in availableLanguages"
+						:disabled="invalidKey || invalidMode"
+						:key="locale.lang"
+						v-model="requestedLanguagesForFolderLevel"
+					>
+						<el-radio :label="locale.lang">
+							{{ getAvailableLanguagesName(locale.lang) }}
+						</el-radio>
+					</el-radio-group>
+				</el-row>
+
+				<el-row>
+					<el-col :span="12">
+						<el-button type="primary" size="mini" v-on:click="switchTabs"
+							>Edit Configuration</el-button
 						>
-							<el-checkbox :label="locale.lang">
-								{{ getAvailableLanguagesName(locale.lang) }}
-							</el-checkbox>
-						</el-checkbox-group>
-					</el-row>
-
-					<el-row v-else>
-						<p class="less-prominent required label" v-if="languagesAvailable">
-							Translate Into
-						</p>
-
-						<el-radio-group
-							v-for="locale in availableLanguages"
-							:disabled="invalidKey || invalidMode"
-							:key="locale.lang"
-							v-model="requestedLanguagesForFolderLevel"
-						>
-							<el-radio :label="locale.lang">
-								{{ getAvailableLanguagesName(locale.lang) }}
-							</el-radio>
-						</el-radio-group>
-					</el-row>
-
-					<el-row>
+					</el-col>
+					<el-col :span="10" :offset="2">
 						<el-button
 							v-if="languagesAvailable"
 							v-on:click="sendTranslationRequest"
@@ -118,32 +114,32 @@
 						>
 							Translate
 						</el-button>
-					</el-row>
-				</div>
-				<div v-else v-loading="true"></div>
-				<footer>
-					<div id="footer-text">
-						<span>
-							Developed by
-							<a href="https://www.virtual-identity.com/" target="_blank"
-								>Virtual Identity AG,</a
-							>
-							a certified Storyblok Partner.
-						</span>
-					</div>
-					<div class="badge">
-						<a
-							href="https://github.com/virtualidentityag/vi-storyblok-deepl-translation-app"
-							target="_blank"
+					</el-col>
+				</el-row>
+			</div>
+			<div v-else v-loading="true"></div>
+			<footer>
+				<div id="footer-text">
+					<span>
+						Developed by
+						<a href="https://www.virtual-identity.com/" target="_blank"
+							>Virtual Identity AG,</a
 						>
-							<img
-								src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"
-								alt="Open Source"
-							/>
-						</a>
-					</div>
-				</footer>
-			</el-card>
+						a certified Storyblok Partner.
+					</span>
+				</div>
+				<div class="badge">
+					<a
+						href="https://github.com/virtualidentityag/vi-storyblok-deepl-translation-app"
+						target="_blank"
+					>
+						<img
+							src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"
+							alt="Open Source"
+						/>
+					</a>
+				</div>
+			</footer>
 		</div>
 	</div>
 </template>
@@ -713,6 +709,8 @@ export default {
 .el-button {
 	background: #00b3b0;
 	border: 1px solid #00b3b0;
+	width: 100%;
+	border-radius: 6px;
 }
 
 .el-button--primary:focus,
@@ -845,7 +843,7 @@ span {
 	width: 100%;
 }
 
-.box-card footer {
+footer {
 	padding: 5px 0px;
 	border-top: 1px solid #ebeef5;
 	box-sizing: border-box;
