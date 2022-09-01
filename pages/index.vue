@@ -104,11 +104,10 @@
 							>Edit Configuration</el-button
 						>
 					</el-col>
-					<el-col :span="10" :offset="2">
+					<el-col :span="11" :offset="1">
 						<el-button
-							v-if="languagesAvailable"
 							v-on:click="sendTranslationRequest"
-							:disabled="invalidKey || invalidMode"
+							:disabled="invalidKey || invalidMode || !languagesAvailable"
 							type="primary"
 							size="mini"
 						>
