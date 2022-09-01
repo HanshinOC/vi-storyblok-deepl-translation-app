@@ -743,7 +743,11 @@ export default {
 	background-color: #00b3b0;
 	border: 1px solid #00b3b0;
 }
-.el-checkbox__input.is-checked + .el-checkbox__label {
+.el-checkbox__label {
+	color: #000000 !important;
+}
+
+.el-checkbox__input.is-checked {
 	color: #00b3b0;
 }
 .el-checkbox__inner:hover {
