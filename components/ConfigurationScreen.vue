@@ -7,7 +7,7 @@
 					type="primary"
 					size="mini"
 					v-on:click="closeSettings"
-					>Close</el-button
+					>Cancel</el-button
 				>
 			</div>
 			<el-form
