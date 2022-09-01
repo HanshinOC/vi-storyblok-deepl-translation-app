@@ -271,12 +271,14 @@ export default {
 	background-color: #caecde;
 	border-color: #caecde;
 }
-.el-message--success .el-message__content {
-	color: #1b243f;
-}
 
 .el-message .el-icon-success {
-	color: rgb(45, 180, 125);
+	color: #1b243f;
+	font-weight: 600;
+}
+.el-message--success .el-message__content {
+	color: #1b243f;
+	font-weight: 600;
 }
 
 .el-message--error {
