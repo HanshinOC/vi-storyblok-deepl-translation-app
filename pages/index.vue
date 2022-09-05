@@ -101,7 +101,6 @@
 					</el-radio-group>
 				</el-row>
 
-				<el-row></el-row>
 				<el-row>
 					<el-col :span="12">
 						<el-button type="plain" size="mini" v-on:click="switchTabs"
@@ -215,8 +214,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -226,8 +225,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
 					height: 550,
 				},
@@ -697,15 +696,15 @@ export default {
 }
 
 .el-icon-success:before {
-	content: "\e720" !important;
+	content: "\e79c" !important;
 }
 
 .el-icon-error:before {
-	content: "\e6c9" !important;
+	content: "\e7a3" !important;
 }
 
 .el-alert {
-	border-radius: 6px;
+	border-radius: 4px;
 }
 
 .el-alert--error.is-light {
@@ -718,26 +717,29 @@ export default {
 
 .el-form-item__label {
 	color: #1b243f;
-	font-weight: 600;
 }
 
 .el-button {
 	width: 100%;
-	border-radius: 6px;
+	border-radius: 4px;
 	color: #fff;
+	min-height: 36px;
 }
 
 .el-button--plain {
-	background: #fff;
-	border: 1px solid #00b3b0;
-	color: #00b3b0;
+	color: #1b243f;
+	background-color: #fff;
+	border-color: #dfe3e8;
 }
 
-.el-button--plain:focus,
+.el-button--plain:focus {
+	outline: 3px solid #f7f8f9;
+	color: #1b243f;
+}
 .el-button--plain:hover {
-	background: #fff;
-	border: 1px solid #00b3b0;
-	color: #00b3b0;
+	background-color: #eff1f3;
+	border-color: #dfe3e8;
+	color: #1b243f;
 }
 
 .el-button--primary {
@@ -805,26 +807,17 @@ export default {
 	color: #00b3b0;
 }
 
-.el-radio__inner {
-	width: 18px;
-	height: 18px;
+.el-radio__input.is-checked .el-radio__inner {
+	border-color: #00b3b0;
+	background: #00b3b0;
 }
 .el-radio__inner:hover {
 	border-color: #00b3b0;
 }
-.el-radio__input.is-checked .el-radio__inner {
-	border-color: #00b3b0;
-	background: #fff;
-}
-.el-radio__inner::after {
-	width: 10px;
-	height: 10px;
-	background-color: #00b3b0 !important;
-}
 
 .label.required::after {
 	content: "*";
-	color: #00b3b0;
+	color: #ff6159 !important;
 	margin-left: 4px;
 }
 .el-form-item.is-required:not(.is-no-asterisk)
@@ -832,7 +825,7 @@ export default {
 	> .el-form-item__label:before,
 .el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label:after {
 	content: "*";
-	color: #00b3b0;
+	color: #ff6159 !important;
 	margin-left: 4px;
 }
 .el-form-item.is-required:not(.is-no-asterisk)
@@ -852,7 +845,7 @@ export default {
 }
 
 .label {
-	font-weight: 600;
+	font-weight: 500;
 }
 
 p,

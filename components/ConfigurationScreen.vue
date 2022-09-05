@@ -1,71 +1,69 @@
 <template>
-	<div class="bodyFontStyle">
-		<el-form
-			:rules="rules"
-			:model="ruleForm"
-			ref="ruleForm"
-			size="mini"
-			class="demo-ruleForm"
-		>
-			<el-col>
-				<el-row>
-					<el-form-item label="Deepl Api Key" prop="apiKey">
-						<el-input v-model="ruleForm.apiKey"></el-input>
-					</el-form-item>
-				</el-row>
-				<el-row>
-					<el-form-item label="Translation Mode" required prop="modeOfTranslation">
-						<el-radio
-							v-model="ruleForm.modeOfTranslation"
-							:label="mode.value"
-							v-for="mode in ruleForm.translationModes"
-							:key="mode.value"
-						>
-							{{ mode.label }}
-						</el-radio>
-					</el-form-item>
-				</el-row>
-
-				<el-row>
-					<el-form-item
-						label="Workflow Status After Translation"
-						prop="workflowStatusId"
-					>
-						<el-select
-							v-model="ruleForm.workflowStatusId"
-							placeholder="Select"
-							size="mini"
-						>
-							<el-option
-								v-for="item in ruleForm.workflowStages"
-								:key="item.id"
-								:label="item.name"
-								:value="item.id"
-							>
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-row>
-
-				<el-form-item>
+	<div>
+		<div class="bodyFontStyle">
+			<el-form
+				:rules="rules"
+				:model="ruleForm"
+				ref="ruleForm"
+				class="demo-ruleForm"
+			>
+				<el-col>
 					<el-row>
-						<el-col :span="12">
-							<el-button type="plain" size="mini" v-on:click="closeSettings"
-								>Cancel</el-button
-							>
-						</el-col>
-						<el-col :span="11" :offset="1">
-							<el-button
-								type="primary"
-								@click="handleSubmit('ruleForm')"
-								:disabled="disableUpdateBtn()"
-								>Update</el-button
-							>
-						</el-col>
+						<el-form-item label="Deepl Api Key" prop="apiKey">
+							<el-input v-model="ruleForm.apiKey"></el-input>
+						</el-form-item>
 					</el-row>
-				</el-form-item>
-			</el-col>
-		</el-form>
+					<el-row>
+						<el-form-item label="Translation Mode" required prop="modeOfTranslation">
+							<el-radio
+								v-model="ruleForm.modeOfTranslation"
+								:label="mode.value"
+								v-for="mode in ruleForm.translationModes"
+								:key="mode.value"
+							>
+								{{ mode.label }}
+							</el-radio>
+						</el-form-item>
+					</el-row>
+
+					<el-row>
+						<el-form-item
+							label="Workflow Status After Translation"
+							prop="workflowStatusId"
+						>
+							<el-select v-model="ruleForm.workflowStatusId" placeholder="Select">
+								<el-option
+									v-for="item in ruleForm.workflowStages"
+									:key="item.id"
+									:label="item.name"
+									:value="item.id"
+								>
+								</el-option>
+							</el-select>
+						</el-form-item>
+					</el-row>
+
+					<el-form-item>
+						<el-row>
+							<el-col :span="12">
+								<el-button type="plain" size="mini" v-on:click="closeSettings"
+									>Cancel</el-button
+								>
+							</el-col>
+							<el-col :span="11" :offset="1">
+								<el-button
+									type="primary"
+									size="mini"
+									@click="handleSubmit('ruleForm')"
+									:disabled="disableUpdateBtn()"
+									>Update</el-button
+								>
+							</el-col>
+						</el-row>
+					</el-form-item>
+				</el-col>
+			</el-form>
+		</div>
 	</div>
 </template>
 <script>
@@ -238,16 +236,22 @@ export default {
 	font-family: "Roboto", sans-serif;
 }
 
+.el-form-item__content {
+	line-height: 21px;
+}
+
 .el-input.is-active .el-input__inner,
-.el-input__inner:focus {
+.el-input__inner:focus,
+.el-input__inner:hover {
 	border-color: #00b3b0;
 	outline: 0;
 }
 .el-select {
 	width: 100%;
 }
-.el-select .el-input__inner:focus {
-	border-color: #00b3b0;
+.el-select .el-input__inner:focus,
+.el-select .el-input__inner:hover {
+	border-color: #00b3b0 !important;
 }
 
 .el-range-editor.is-active,
@@ -256,15 +260,15 @@ export default {
 	border-color: #00b3b0;
 }
 .el-select-dropdown__item.selected {
-	color: #00b3b0;
-	font-weight: 700;
+	color: #00b3b0 !important;
+	font-weight: 500;
 }
 .el-input__inner {
 	color: #1b243f;
 }
 
 .el-message {
-	min-width: 100%;
+	min-width: 95%;
 	font-family: "Roboto", SANS-SERIF;
 	border-radius: 6px;
 }
@@ -274,13 +278,21 @@ export default {
 	border-color: #caecde;
 }
 
-.el-message .el-icon-success,
 .el-message--error .el-message__content,
-.el-message--success .el-message__content,
-.el-message .el-icon-error,
-.el-message .el-icon-success {
+.el-message--success .el-message__content {
 	color: #1b243f;
-	font-weight: 600;
+	font-weight: 500;
+}
+
+.el-icon-error {
+	color: rgb(255, 97, 89);
+	font-weight: 500;
+	font-size: x-large;
+}
+.el-icon-success {
+	color: #2db47e;
+	font-weight: 500;
+	font-size: x-large;
 }
 
 .el-message--error {
@@ -294,5 +306,8 @@ p {
 
 .el-select-dropdown__item span {
 	font-family: sans-serif;
+}
+.el-select-dropdown__item {
+	color: #1b243f;
 }
 </style>
