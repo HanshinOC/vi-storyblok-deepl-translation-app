@@ -78,7 +78,6 @@ export const deepLTranslate = async (text, targetLanguage, sourceLanguage, deepL
 			const response = await translate({
 				text,
 				target_lang: truncatedTargetLanguageString,
-				source_lang: truncatedSourceLanguageString,
 				auth_key: deepLKey,
 				tag_handling: 'xml',
 				split_sentences: '1',

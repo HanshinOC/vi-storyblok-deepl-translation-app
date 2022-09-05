@@ -616,14 +616,10 @@ export default {
 
 					if (this.modeOfTranslation === FOLDER_LEVEL) {
 
-						let extractedFields = {
-							...this.extractingFields(updatedStory.storyJSON, storyObject),
-						};
-
 						this.folderLevelTranslationRequest(
 							storyObject,
 							updatedStory.storyJSON,
-							this.generateXML(extractedFields), // converting json to xml
+							this.generateXML(updatedStory.storyJSON), // converting json to xml
 							sourceLanguage
 						);
 					}
