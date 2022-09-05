@@ -101,6 +101,7 @@
 					</el-radio-group>
 				</el-row>
 
+				<el-row></el-row>
 				<el-row>
 					<el-col :span="12">
 						<el-button type="plain" size="mini" v-on:click="switchTabs"
@@ -214,8 +215,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					// tool: "virtual-identity-ag@auto-translations-app",
-					tool: "virtual-identity-ag@translations-backup-app",
+					tool: "virtual-identity-ag@auto-translations-app",
+					// tool: "virtual-identity-ag@translations-backup-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -225,8 +226,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					// tool: "virtual-identity-ag@auto-translations-app",
-					tool: "virtual-identity-ag@translations-backup-app",
+					tool: "virtual-identity-ag@auto-translations-app",
+					// tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
 					height: 550,
 				},
