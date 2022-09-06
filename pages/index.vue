@@ -843,10 +843,6 @@ p,
 span {
 	font-size: 14px;
 }
-.error-text {
-	color: #f56c6c;
-	font-weight: bold;
-}
 
 .clearfix:before,
 .clearfix:after {

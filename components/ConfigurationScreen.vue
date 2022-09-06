@@ -285,12 +285,13 @@ export default {
 }
 
 .el-icon-error {
-	color: rgb(255, 97, 89);
+	color: rgb(255, 97, 89) !important;
 	font-weight: 500;
 	font-size: x-large;
 }
+
 .el-icon-success {
-	color: #2db47e;
+	color: rgb(45, 180, 125) !important;
 	font-weight: 500;
 	font-size: x-large;
 }
