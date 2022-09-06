@@ -741,14 +741,20 @@ export default {
 	border-color: #00b3b0;
 }
 
-.el-radio {
+/* .el-radio {
 	color: #1b243f;
 	margin-right: 20px;
+} */
+
+.el-radio {
+	color: #1b243f;
+	width: 100%;
 }
 
 .el-radio-button__inner,
 .el-radio-group {
 	margin-bottom: 2px;
+	width: 100%;
 }
 
 .el-radio__input.is-checked .el-radio__inner {
