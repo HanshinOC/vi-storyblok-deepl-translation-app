@@ -48,29 +48,22 @@
 					</el-alert>
 				</el-row>
 
-				<el-row>
-					<p class="less-prominent label" v-if="languagesAvailable">
-						Content will be translated from:
-					</p>
-					<p class="less-prominent" v-if="languagesAvailable">
-						{{ getlangName(currentLanguage) }}
-					</p>
-				</el-row>
-
+				<el-row></el-row>
+				<p class="less-prominent label" v-if="languagesAvailable">
+					Content will be translated from:
+					<strong>{{ getlangName(currentLanguage) }}</strong>
+				</p>
 				<p
 					class="less-prominent label"
 					v-if="getTranslationModeName(modeOfTranslation)"
 				>
 					Translation Mode is set to:
+					<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
 				</p>
-				<p class="less-prominent" v-if="getTranslationModeName(modeOfTranslation)">
-					{{ getTranslationModeName(modeOfTranslation) }}
-				</p>
+				<el-row />
 
 				<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
-					<p class="less-prominent required label" v-if="languagesAvailable">
-						Translate Into
-					</p>
+					<p class="required label" v-if="languagesAvailable">Translate Into</p>
 
 					<el-checkbox-group
 						v-for="locale in availableLanguages"
@@ -85,9 +78,7 @@
 				</el-row>
 
 				<el-row v-else>
-					<p class="less-prominent required label" v-if="languagesAvailable">
-						Translate Into
-					</p>
+					<p class="required label" v-if="languagesAvailable">Translate Into</p>
 
 					<el-radio-group
 						v-for="locale in availableLanguages"
@@ -838,7 +829,7 @@ export default {
 }
 
 .less-prominent {
-	font-size: 14px !important;
+	font-size: 12px !important;
 	line-height: 7px;
 	color: #000000;
 	font-weight: 400;
@@ -875,7 +866,7 @@ footer {
 	padding: 5px 0px;
 	border-top: 1px solid #ebeef5;
 	box-sizing: border-box;
-	margin-top: 25px;
+	margin-top: 30px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
