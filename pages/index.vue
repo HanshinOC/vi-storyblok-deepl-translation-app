@@ -101,6 +101,7 @@
 					<el-col :span="11" :offset="1">
 						<el-button
 							v-on:click="sendTranslationRequest"
+							:loading="waitingForTranslationResponse"
 							:disabled="invalidKey || invalidMode || !languagesAvailable"
 							type="primary"
 							size="mini"
@@ -190,6 +191,7 @@ export default {
 			translationMode: "",
 			spaceId: this.$route.query.space_id,
 
+			waitingForTranslationResponse: false,
 
 		};
 	},
@@ -502,6 +504,8 @@ export default {
 			);
 
 			if (response) {
+				this.waitingForTranslationResponse = false
+
 				let convertedXml = {
 					...this.convertXMLToJSON(
 						response.translations[0].text,
@@ -553,6 +557,7 @@ export default {
 					);
 
 					if (response) {
+						this.waitingForTranslationResponse = false
 
 						let convertedXml = {
 							...this.convertXMLToJSON(
@@ -600,6 +605,7 @@ export default {
 				if (
 					!this.requestedLanguagesForFieldLevel.includes(this.currentLanguage)
 				) {
+					this.waitingForTranslationResponse = true
 
 					let updatedStory = await fetchStory(
 						this.spaceId,
