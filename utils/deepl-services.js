@@ -81,6 +81,7 @@ export const deepLTranslate = async (text, targetLanguage, sourceLanguage, deepL
 				auth_key: deepLKey,
 				tag_handling: 'xml',
 				split_sentences: '1',
+				preserve_formatting: '1'
 			});
 
 			return response.data;
