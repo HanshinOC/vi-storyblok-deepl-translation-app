@@ -14,125 +14,126 @@
 				:workflowObj="workFlowStatusObj"
 			/>
 		</div>
-		<div v-if="!showConfigurationScreen">
-			<el-card class="box-card bodyFont">
-				<div slot="header" class="clearfix">
-					<el-button
-						style="float: right"
-						type="primary"
-						size="mini"
-						v-on:click="switchTabs"
-						>Edit Configuration</el-button
-					>
-				</div>
-				<div v-if="!loadingContext">
-					<el-row v-if="!languagesAvailable">
-						<el-alert
-							title="No languages found"
-							type="error"
-							description="Please setup translation mode and add languages to use the application. 
+		<div class="bodyFont" v-if="!showConfigurationScreen">
+			<div v-if="!loadingContext">
+				<el-row v-if="!languagesAvailable">
+					<el-alert
+						show-icon
+						title="No languages found"
+						type="error"
+						description="Please setup translation mode and add languages to use the application. 
           For more info visit: https://www.storyblok.com/docs/guide/in-depth/internationalization"
-							:closable="false"
+						:closable="false"
+					>
+					</el-alert>
+				</el-row>
+				<el-row v-show="invalidKey">
+					<el-alert
+						show-icon
+						title="Invalid key."
+						type="error"
+						description="Please enter a valid DeepL api key in app configuration."
+						:closable="false"
+					>
+					</el-alert>
+				</el-row>
+				<el-row v-show="invalidMode">
+					<el-alert
+						show-icon
+						title="Invalid Translation Mode."
+						type="error"
+						description="Please select a valid translation mode from app configuration."
+						:closable="false"
+					>
+					</el-alert>
+				</el-row>
+
+				<el-row></el-row>
+				<p class="less-prominent label" v-if="languagesAvailable">
+					Content will be translated from:
+					<strong>{{ getlangName(currentLanguage) }}</strong>
+				</p>
+				<p
+					class="less-prominent label"
+					v-if="getTranslationModeName(modeOfTranslation)"
+				>
+					Translation Mode is set to:
+					<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
+				</p>
+				<el-row />
+
+				<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
+					<p class="required label" v-if="languagesAvailable">Translate Into</p>
+
+					<el-checkbox-group
+						v-for="locale in availableLanguages"
+						:disabled="invalidKey || invalidMode"
+						:key="locale.lang"
+						v-model="requestedLanguagesForFieldLevel"
+					>
+						<el-checkbox :label="locale.lang">
+							{{ getAvailableLanguagesName(locale.lang) }}
+						</el-checkbox>
+					</el-checkbox-group>
+				</el-row>
+
+				<el-row v-else>
+					<p class="required label" v-if="languagesAvailable">Translate Into</p>
+
+					<el-radio-group
+						v-for="locale in availableLanguages"
+						:disabled="invalidKey || invalidMode"
+						:key="locale.lang"
+						v-model="requestedLanguagesForFolderLevel"
+					>
+						<el-radio :label="locale.lang">
+							{{ getAvailableLanguagesName(locale.lang) }}
+						</el-radio>
+					</el-radio-group>
+				</el-row>
+
+				<el-row>
+					<el-col :span="12">
+						<el-button type="plain" size="mini" v-on:click="switchTabs"
+							>Edit Configuration</el-button
 						>
-						</el-alert>
-					</el-row>
-					<el-row v-show="invalidKey">
-						<el-alert
-							title="Invalid key."
-							type="error"
-							description="Please enter a valid DeepL api key in app configuration."
-							:closable="false"
-						>
-						</el-alert>
-					</el-row>
-					<el-row v-show="invalidMode">
-						<el-alert
-							title="Invalid Translation Mode."
-							type="error"
-							description="Please select a valid translation mode from app configuration."
-							:closable="false"
-						>
-						</el-alert>
-					</el-row>
-
-					<el-row>
-						<span class="less-prominent" v-if="languagesAvailable">
-							Content will be translated from: {{ getlangName(currentLanguage) }}
-						</span>
-
-						<span
-							class="less-prominent"
-							v-if="getTranslationModeName(modeOfTranslation)"
-						>
-							Translation Mode is set to:
-							<strong>{{ getTranslationModeName(modeOfTranslation) }}</strong>
-						</span>
-					</el-row>
-
-					<el-row v-if="modeOfTranslation === 'FIELD_LEVEL'">
-						<p v-if="languagesAvailable">Translate Into: (required)</p>
-
-						<el-checkbox-group
-							v-for="locale in availableLanguages"
-							:disabled="invalidKey || invalidMode"
-							:key="locale.lang"
-							v-model="requestedLanguagesForFieldLevel"
-						>
-							<el-checkbox :label="locale.lang">
-								{{ getAvailableLanguagesName(locale.lang) }}
-							</el-checkbox>
-						</el-checkbox-group>
-					</el-row>
-
-					<el-row v-else>
-						<p v-if="languagesAvailable">Translate Into: (required)</p>
-
-						<el-radio-group
-							v-for="locale in availableLanguages"
-							:disabled="invalidKey || invalidMode"
-							:key="locale.lang"
-							v-model="requestedLanguagesForFolderLevel"
-						>
-							<el-radio :label="locale.lang">
-								{{ getAvailableLanguagesName(locale.lang) }}
-							</el-radio>
-						</el-radio-group>
-					</el-row>
-
-					<el-row>
+					</el-col>
+					<el-col :span="11" :offset="1">
 						<el-button
-							v-if="languagesAvailable"
 							v-on:click="sendTranslationRequest"
-							:disabled="invalidKey || invalidMode"
+							:loading="waitingForTranslationResponse"
+							:disabled="invalidKey || invalidMode || !languagesAvailable"
 							type="primary"
 							size="mini"
 						>
 							Translate
 						</el-button>
-					</el-row>
-				</div>
-				<div v-else v-loading="true"></div>
-				<footer>
-					<div>
+					</el-col>
+				</el-row>
+			</div>
+			<div v-else v-loading="true"></div>
+			<footer>
+				<div id="footer-text">
+					<span>
 						Developed by
 						<a href="https://www.virtual-identity.com/" target="_blank"
-							><b>Virtual Identity AG,</b></a
+							>Virtual Identity AG,</a
 						>
 						a certified Storyblok Partner.
-					</div>
-					<div class="badge">
-						<a
-							href="https://github.com/virtualidentityag/vi-storyblok-deepl-translation-app"
-							target="_blank"
-						>
-							<img
-								src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"
-								alt="Open Source"
-							/>
-						</a>
-					</div>
-				</footer>
-			</el-card>
+					</span>
+				</div>
+				<div class="badge">
+					<a
+						href="https://github.com/virtualidentityag/vi-storyblok-deepl-translation-app"
+						target="_blank"
+					>
+						<img
+							src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"
+							alt="Open Source"
+						/>
+					</a>
+				</div>
+			</footer>
 		</div>
 	</div>
 </template>
@@ -190,6 +191,7 @@ export default {
 			translationMode: "",
 			spaceId: this.$route.query.space_id,
 
+			waitingForTranslationResponse: false,
 
 		};
 	},
@@ -205,7 +207,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -215,7 +218,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
 					height: 550,
 				},
@@ -342,15 +346,27 @@ export default {
 			);
 		},
 
+		// generateXML(obj) {
+		// 	let str = "";
+
+		// 	for (let key in obj) {
+		// 		str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
+		// 	}
+
+		// 	return str;
+		// },
+
 		generateXML(obj) {
 			let str = "";
 
 			for (let key in obj) {
-				str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
+				if (!key.includes('richtext') && !key.includes('color') && !key.includes('style') && !key.includes('size'))
+					str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
 			}
 
 			return str;
 		},
+
 		convertXMLToJSON(xml, extractedFields) {
 			let obj = {};
 
@@ -450,9 +466,10 @@ export default {
 						} while (extractedContent.component !== extracted[1]); //loop until component name is not matched
 
 						if (extractedContent) {
-							Object.assign(translatableContents, {
-								[`${keys}`]: extractedContent[`${extracted[2]}${languageStr}`],
-							}); // creating an object of translatable fields
+							if (extractedContent.component.includes('richtext'))
+								Object.assign(translatableContents, { [`${keys}`]: JSON.stringify(extractedContent.text) }); // creating an object of translatable fields
+							else
+								Object.assign(translatableContents, { [`${keys}`]: extractedContent[`${extracted[2]}${languageStr}`] }); // creating an object of translatable fields
 						}
 					}
 				}
@@ -493,22 +510,25 @@ export default {
 		) {
 			const response = await deepLTranslate(
 				extractedFieldsXML,
-				this.requestedLanguagesForFolderLevel.split("-")[0].trim(),
+				this.requestedLanguagesForFolderLevel,
 				sourceLanguage,
 				this.apiKey
 			);
 
 			if (response) {
+				this.waitingForTranslationResponse = false
+
 				let convertedXml = {
 					...this.convertXMLToJSON(
 						response.translations[0].text,
 						storyJson
 					),
-					language: this.requestedLanguagesForFolderLevel,
+					language: "default",
 					page: this.story.id + "",
 					text_nodes: JSON.parse(storyJson.text_nodes),
 					url: storyJson.url,
 				};
+
 
 				storyObject = await updateStory(
 					this.spaceId,
@@ -534,7 +554,6 @@ export default {
 		async fieldLevelTranslationRequest(
 			storyObject,
 			storyJson,
-			extractedFields,
 			extractedFieldsXML,
 			sourceLanguage
 		) {
@@ -544,22 +563,23 @@ export default {
 
 					const response = await deepLTranslate(
 						extractedFieldsXML,
-						requestedLanguage.split("-")[0].trim(),
+						requestedLanguage,
 						sourceLanguage,
 						this.apiKey
 					);
 
 					if (response) {
+						this.waitingForTranslationResponse = false
 
 						let convertedXml = {
 							...this.convertXMLToJSON(
 								response.translations[0].text,
-								extractedFields
+								storyJson
 							),
 							language: requestedLanguage,
 							page: this.story.id + "",
 							text_nodes: JSON.parse(storyJson.text_nodes),
-							url: JSON.parse(storyJson.url),
+							url: storyJson.url,
 						};
 
 						storyObject = await updateStory(
@@ -597,6 +617,7 @@ export default {
 				if (
 					!this.requestedLanguagesForFieldLevel.includes(this.currentLanguage)
 				) {
+					this.waitingForTranslationResponse = true
 
 					let updatedStory = await fetchStory(
 						this.spaceId,
@@ -614,30 +635,19 @@ export default {
 
 					if (this.modeOfTranslation === FOLDER_LEVEL) {
 
-						let extractedFields = {
-							...this.extractingFields(updatedStory.storyJSON, storyObject),
-						};
-
 						this.folderLevelTranslationRequest(
 							storyObject,
 							updatedStory.storyJSON,
-							this.generateXML(extractedFields), // converting json to xml
+							this.generateXML(updatedStory.storyJSON), // converting json to xml
 							sourceLanguage
 						);
 					}
 					else {
-						let storyJson = this.removeUnwanted(
-							updatedStory.storyJSON,
-							updatedStory.storyJSONWithLang
-						);
-						let extractedFields = {
-							...this.extractingFields(storyJson, storyObject),
-						};
+
 						this.fieldLevelTranslationRequest(
 							storyObject,
-							storyJson,
-							extractedFields,
-							this.generateXML(extractedFields), // converting json to xml
+							updatedStory.storyJSONWithLang,
+							this.generateXML(updatedStory.storyJSONWithLang), // converting json to xml
 							sourceLanguage
 						);
 					}
@@ -653,19 +663,21 @@ export default {
 			this.$message({
 				message: "Translation Successful!",
 				type: 'success',
+				showClose: true,
 			});
 		},
 		customErrorMessage(_message) {
 			this.$message.error({
 				message: _message,
 				type: 'error',
+				showClose: true,
 			});
 		},
 		languageErrorMessage(lang) {
 			this.$message.error({
 				message: `Error occurred for language ${this.getlangName(lang)}. Please try again later.`,
 				type: 'error',
-				duration: 20000,
+				showClose: true,
 			});
 		},
 	},
@@ -685,6 +697,18 @@ export default {
 	margin-bottom: 0;
 }
 
+.el-icon-success:before {
+	content: "\e79c" !important;
+}
+
+.el-icon-error:before {
+	content: "\e7a3" !important;
+}
+
+.el-alert {
+	border-radius: 4px;
+}
+
 .el-alert--error.is-light {
 	background-color: #ffd7d5;
 	color: #1b243f;
@@ -698,15 +722,37 @@ export default {
 }
 
 .el-button {
+	width: 100%;
+	border-radius: 4px;
+	color: #fff;
+	min-height: 36px;
+}
+
+.el-button--plain {
+	color: #1b243f;
+	background-color: #fff;
+	border-color: #dfe3e8;
+}
+
+.el-button--plain:focus {
+	outline: 3px solid #f7f8f9;
+	color: #1b243f;
+}
+.el-button--plain:hover {
+	background-color: #eff1f3;
+	border-color: #dfe3e8;
+	color: #1b243f;
+}
+
+.el-button--primary {
 	background: #00b3b0;
 	border: 1px solid #00b3b0;
 }
 
 .el-button--primary:focus,
 .el-button--primary:hover {
-	background: #009f9c;
+	background: #00b3b0;
 	border-color: #00b3b0;
-	color: #fff;
 }
 
 .el-button--primary.is-active,
@@ -732,7 +778,11 @@ export default {
 	background-color: #00b3b0;
 	border: 1px solid #00b3b0;
 }
-.el-checkbox__input.is-checked + .el-checkbox__label {
+.el-checkbox__label {
+	color: #000000 !important;
+}
+
+.el-checkbox__input.is-checked {
 	color: #00b3b0;
 }
 .el-checkbox__inner:hover {
@@ -744,38 +794,65 @@ export default {
 
 .el-radio {
 	color: #1b243f;
-	margin-right: 20px;
+	width: 100%;
 }
 
 .el-radio-button__inner,
 .el-radio-group {
-	margin-bottom: 2px;
+	width: 100%;
+}
+
+.el-radio__label {
+	color: #000000 !important;
+}
+.el-radio__input.is-checked {
+	color: #00b3b0;
 }
 
 .el-radio__input.is-checked .el-radio__inner {
 	border-color: #00b3b0;
 	background: #00b3b0;
 }
-
-.el-radio__input.is-checked + .el-radio__label {
-	color: #00b3b0;
-}
 .el-radio__inner:hover {
 	border-color: #00b3b0;
 }
 
+.label.required::after {
+	content: "*";
+	color: #ff6159 !important;
+	margin-left: 4px;
+}
+.el-form-item.is-required:not(.is-no-asterisk)
+	.el-form-item__label-wrap
+	> .el-form-item__label:before,
+.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label:after {
+	content: "*";
+	color: #ff6159 !important;
+	margin-left: 4px;
+}
+.el-form-item.is-required:not(.is-no-asterisk)
+	.el-form-item__label-wrap
+	> .el-form-item__label:before,
+.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label:before {
+	content: "";
+	color: #f56c6c;
+	margin: 0px;
+}
+
 .less-prominent {
-	font-size: 11px !important;
-	color: #606266;
+	font-size: 12px !important;
+	line-height: 7px;
+	color: #000000;
+	font-weight: 400;
+}
+
+.label {
+	font-weight: 500;
 }
 
 p,
 span {
 	font-size: 14px;
-}
-.error-text {
-	color: #f56c6c;
-	font-weight: bold;
 }
 
 .clearfix:before,
@@ -792,18 +869,25 @@ span {
 	width: 100%;
 }
 
-.box-card footer {
+footer {
 	padding: 5px 0px;
 	border-top: 1px solid #ebeef5;
 	box-sizing: border-box;
-	margin-top: 25px;
+	margin-top: 30px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 }
 
-footer div {
+footer span {
 	font-size: 12px;
+	color: #00000099;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+#footer-text {
+	margin-top: 24px;
 }
 
 footer img {
@@ -812,13 +896,13 @@ footer img {
 
 footer a {
 	text-decoration: none;
-	color: #1b243f;
+	font-weight: 700;
+	color: #00000099;
 }
 
 .badge {
 	display: flex;
 	align-items: flex-end;
-	justify-content: flex-end;
 	height: 6vh;
 }
 </style>

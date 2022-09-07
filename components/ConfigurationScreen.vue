@@ -1,20 +1,10 @@
 <template>
-	<div class="bodyFontStyle">
-		<el-card class="box-card">
-			<div slot="header" class="clearfix">
-				<el-button
-					style="float: right"
-					type="primary"
-					size="mini"
-					v-on:click="closeSettings"
-					>Close</el-button
-				>
-			</div>
+	<div>
+		<div class="bodyFontStyle">
 			<el-form
 				:rules="rules"
 				:model="ruleForm"
 				ref="ruleForm"
-				size="mini"
 				class="demo-ruleForm"
 			>
 				<el-col>
@@ -41,11 +31,7 @@
 							label="Workflow Status After Translation"
 							prop="workflowStatusId"
 						>
-							<el-select
-								v-model="ruleForm.workflowStatusId"
-								placeholder="Select"
-								size="mini"
-							>
+							<el-select v-model="ruleForm.workflowStatusId" placeholder="Select">
 								<el-option
 									v-for="item in ruleForm.workflowStages"
 									:key="item.id"
@@ -58,16 +44,27 @@
 					</el-row>
 
 					<el-form-item>
-						<el-button
-							type="primary"
-							@click="handleSubmit('ruleForm')"
-							:disabled="disableUpdateBtn()"
-							>Update</el-button
-						>
+						<el-row>
+							<el-col :span="12">
+								<el-button type="plain" size="mini" v-on:click="closeSettings"
+									>Cancel</el-button
+								>
+							</el-col>
+							<el-col :span="11" :offset="1">
+								<el-button
+									type="primary"
+									size="mini"
+									@click="handleSubmit('ruleForm')"
+									:disabled="disableUpdateBtn()"
+									:loading="waitingForResponse"
+									>Update</el-button
+								>
+							</el-col>
+						</el-row>
 					</el-form-item>
 				</el-col>
 			</el-form>
-		</el-card>
+		</div>
 	</div>
 </template>
 <script>
@@ -89,7 +86,7 @@ export default {
 	data() {
 		return {
 			spaceId: this.$route.query.space_id,
-
+			waitingForResponse: false,
 			ruleForm: {
 				apiKey: this.deeplKey === API_KEY_INITIAL_VALUE ? "" : this.deeplKey,
 				apiKeyObj: this.deeplKeyObj,
@@ -175,6 +172,7 @@ export default {
 						});
 
 					updatedValues.forEach(async (datasourceEntry, index) => {
+						this.waitingForResponse = true
 						let response = await updateDataSourceEntries(
 							this.spaceId,
 							datasourceEntry
@@ -182,8 +180,10 @@ export default {
 
 						if (response.status === 204) {
 
-							if (index === updatedValues.length - 1)
+							if (index === updatedValues.length - 1) {
+								this.waitingForResponse = false
 								this.successMessage('Configuration(s) updated.');
+							}
 
 							switch (datasourceEntry.name) {
 								case API_KEY_DATASOURCE_NAME:
@@ -223,12 +223,14 @@ export default {
 			this.$message({
 				message: `${message}`,
 				type: 'success',
+				showClose: true,
 			});
 		},
 		errorMessage(_message) {
 			this.$message.error({
 				message: _message ?? "Something went wrong, try again later.",
 				type: 'error',
+				showClose: true,
 			});
 		},
 	},
@@ -240,13 +242,22 @@ export default {
 	font-family: "Roboto", sans-serif;
 }
 
+.el-form-item__content {
+	line-height: 21px;
+}
+
 .el-input.is-active .el-input__inner,
-.el-input__inner:focus {
+.el-input__inner:focus,
+.el-input__inner:hover {
 	border-color: #00b3b0;
 	outline: 0;
 }
-.el-select .el-input__inner:focus {
-	border-color: #00b3b0;
+.el-select {
+	width: 100%;
+}
+.el-select .el-input__inner:focus,
+.el-select .el-input__inner:hover {
+	border-color: #00b3b0 !important;
 }
 
 .el-range-editor.is-active,
@@ -255,27 +266,40 @@ export default {
 	border-color: #00b3b0;
 }
 .el-select-dropdown__item.selected {
-	color: #00b3b0;
-	font-weight: 700;
+	color: #00b3b0 !important;
+	font-weight: 500;
 }
 .el-input__inner {
 	color: #1b243f;
 }
+
 .el-message {
-	min-width: 89%;
+	min-width: 95%;
 	font-family: "Roboto", SANS-SERIF;
+	border-radius: 6px;
 }
 
 .el-message--success {
 	background-color: #caecde;
 	border-color: #caecde;
 }
+
+.el-message--error .el-message__content,
 .el-message--success .el-message__content {
 	color: #1b243f;
+	font-weight: 500;
 }
 
-.el-message .el-icon-success {
-	color: rgb(45, 180, 125);
+.el-icon-error {
+	color: rgb(255, 97, 89) !important;
+	font-weight: 500;
+	font-size: x-large;
+}
+
+.el-icon-success {
+	color: rgb(45, 180, 125) !important;
+	font-weight: 500;
+	font-size: x-large;
 }
 
 .el-message--error {
@@ -283,22 +307,14 @@ export default {
 	border-color: #ffd7d5;
 }
 
-.el-message--error .el-message__content {
-	color: #1b243f;
-}
-
-.el-message .el-icon-error {
-	color: rgb(255, 97, 89);
-}
-
 p {
 	font-size: 14px;
 }
-.error-text {
-	color: #f56c6c;
-	font-weight: bold;
-}
+
 .el-select-dropdown__item span {
 	font-family: sans-serif;
+}
+.el-select-dropdown__item {
+	color: #1b243f;
 }
 </style>
