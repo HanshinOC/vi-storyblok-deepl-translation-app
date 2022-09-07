@@ -56,6 +56,7 @@
 									size="mini"
 									@click="handleSubmit('ruleForm')"
 									:disabled="disableUpdateBtn()"
+									:loading="waitingForResponse"
 									>Update</el-button
 								>
 							</el-col>
@@ -85,7 +86,7 @@ export default {
 	data() {
 		return {
 			spaceId: this.$route.query.space_id,
-
+			waitingForResponse: false,
 			ruleForm: {
 				apiKey: this.deeplKey === API_KEY_INITIAL_VALUE ? "" : this.deeplKey,
 				apiKeyObj: this.deeplKeyObj,
@@ -171,6 +172,7 @@ export default {
 						});
 
 					updatedValues.forEach(async (datasourceEntry, index) => {
+						this.waitingForResponse = true
 						let response = await updateDataSourceEntries(
 							this.spaceId,
 							datasourceEntry
@@ -178,8 +180,10 @@ export default {
 
 						if (response.status === 204) {
 
-							if (index === updatedValues.length - 1)
+							if (index === updatedValues.length - 1) {
+								this.waitingForResponse = false
 								this.successMessage('Configuration(s) updated.');
+							}
 
 							switch (datasourceEntry.name) {
 								case API_KEY_DATASOURCE_NAME:
