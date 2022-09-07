@@ -14,8 +14,11 @@ export default {
       { hid: 'description', name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
+    // link: [
+    //   // { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto' },
+    //   { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=sanserif' },
+    // ]
   },
-
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     'element-ui/lib/theme-chalk/index.css'
