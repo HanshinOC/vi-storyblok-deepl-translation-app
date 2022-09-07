@@ -655,18 +655,21 @@ export default {
 			this.$message({
 				message: "Translation Successful!",
 				type: 'success',
+				showClose: true,
 			});
 		},
 		customErrorMessage(_message) {
 			this.$message.error({
 				message: _message,
 				type: 'error',
+				showClose: true,
 			});
 		},
 		languageErrorMessage(lang) {
 			this.$message.error({
 				message: `Error occurred for language ${this.getlangName(lang)}. Please try again later.`,
 				type: 'error',
+				showClose: true,
 			});
 		},
 	},

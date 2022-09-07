@@ -219,12 +219,14 @@ export default {
 			this.$message({
 				message: `${message}`,
 				type: 'success',
+				showClose: true,
 			});
 		},
 		errorMessage(_message) {
 			this.$message.error({
 				message: _message ?? "Something went wrong, try again later.",
 				type: 'error',
+				showClose: true,
 			});
 		},
 	},

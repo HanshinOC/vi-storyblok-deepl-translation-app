@@ -51,11 +51,11 @@ const returnErrorMessage = (statusCode) => {
 	const errorIndex = errorMessages.findIndex((errorObj) => errorObj.code === statusCode);
 
 	if (errorIndex !== -1 && errorMessages[errorIndex]) {
-		Message.error({ message: errorMessages[errorIndex].message, type: 'error' });
+		Message.error({ message: errorMessages[errorIndex].message, type: 'error', showClose: true });
 		return undefined
 	}
 
-	Message.error({ message: 'Something went wrong.. Please try again in a bit.', type: 'error' });
+	Message.error({ message: 'Something went wrong.. Please try again in a bit.', type: 'error', showClose: true });
 	return undefined
 };
 
