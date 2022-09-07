@@ -452,9 +452,10 @@ export default {
 						} while (extractedContent.component !== extracted[1]); //loop until component name is not matched
 
 						if (extractedContent) {
-							Object.assign(translatableContents, {
-								[`${keys}`]: extractedContent[`${extracted[2]}${languageStr}`],
-							}); // creating an object of translatable fields
+							if (extractedContent.component.includes('richtext'))
+								Object.assign(translatableContents, { [`${keys}`]: JSON.stringify(extractedContent.text) }); // creating an object of translatable fields
+							else
+								Object.assign(translatableContents, { [`${keys}`]: extractedContent[`${extracted[2]}${languageStr}`] }); // creating an object of translatable fields
 						}
 					}
 				}
@@ -616,14 +617,10 @@ export default {
 
 					if (this.modeOfTranslation === FOLDER_LEVEL) {
 
-						let extractedFields = {
-							...this.extractingFields(updatedStory.storyJSON, storyObject),
-						};
-
 						this.folderLevelTranslationRequest(
 							storyObject,
 							updatedStory.storyJSON,
-							this.generateXML(extractedFields), // converting json to xml
+							this.generateXML(updatedStory.storyJSON), // converting json to xml
 							sourceLanguage
 						);
 					}
