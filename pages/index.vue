@@ -346,15 +346,27 @@ export default {
 			);
 		},
 
+		// generateXML(obj) {
+		// 	let str = "";
+
+		// 	for (let key in obj) {
+		// 		str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
+		// 	}
+
+		// 	return str;
+		// },
+
 		generateXML(obj) {
 			let str = "";
 
 			for (let key in obj) {
-				str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
+				if (!key.includes('richtext') && !key.includes('color') && !key.includes('style') && !key.includes('size'))
+					str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
 			}
 
 			return str;
 		},
+
 		convertXMLToJSON(xml, extractedFields) {
 			let obj = {};
 
@@ -498,7 +510,7 @@ export default {
 		) {
 			const response = await deepLTranslate(
 				extractedFieldsXML,
-				this.requestedLanguagesForFolderLevel.split("-")[0].trim(),
+				this.requestedLanguagesForFolderLevel,
 				sourceLanguage,
 				this.apiKey
 			);
@@ -511,11 +523,12 @@ export default {
 						response.translations[0].text,
 						storyJson
 					),
-					language: this.requestedLanguagesForFolderLevel,
+					language: "default",
 					page: this.story.id + "",
 					text_nodes: JSON.parse(storyJson.text_nodes),
 					url: storyJson.url,
 				};
+
 
 				storyObject = await updateStory(
 					this.spaceId,
@@ -541,7 +554,6 @@ export default {
 		async fieldLevelTranslationRequest(
 			storyObject,
 			storyJson,
-			extractedFields,
 			extractedFieldsXML,
 			sourceLanguage
 		) {
@@ -551,7 +563,7 @@ export default {
 
 					const response = await deepLTranslate(
 						extractedFieldsXML,
-						requestedLanguage.split("-")[0].trim(),
+						requestedLanguage,
 						sourceLanguage,
 						this.apiKey
 					);
@@ -562,12 +574,12 @@ export default {
 						let convertedXml = {
 							...this.convertXMLToJSON(
 								response.translations[0].text,
-								extractedFields
+								storyJson
 							),
 							language: requestedLanguage,
 							page: this.story.id + "",
 							text_nodes: JSON.parse(storyJson.text_nodes),
-							url: JSON.parse(storyJson.url),
+							url: storyJson.url,
 						};
 
 						storyObject = await updateStory(
@@ -631,18 +643,11 @@ export default {
 						);
 					}
 					else {
-						let storyJson = this.removeUnwanted(
-							updatedStory.storyJSON,
-							updatedStory.storyJSONWithLang
-						);
-						let extractedFields = {
-							...this.extractingFields(storyJson, storyObject),
-						};
+
 						this.fieldLevelTranslationRequest(
 							storyObject,
-							storyJson,
-							extractedFields,
-							this.generateXML(extractedFields), // converting json to xml
+							updatedStory.storyJSONWithLang,
+							this.generateXML(updatedStory.storyJSONWithLang), // converting json to xml
 							sourceLanguage
 						);
 					}
