@@ -55,7 +55,7 @@ const returnErrorMessage = (statusCode) => {
 		return undefined
 	}
 
-	Message.error({ message: 'Something went wrong.. Please try again in a bit.', type: 'error', showClose: true });
+	Message.error({ message: 'Something went wrong. Please try again in a bit.', type: 'error', showClose: true });
 	return undefined
 };
 
@@ -88,6 +88,10 @@ export const deepLTranslate = async (text, targetLanguage, sourceLanguage, deepL
 		} catch (e) {
 			returnErrorMessage(e.response.status);
 			return undefined;
+		}
+		finally {
+			returnErrorMessage(undefined);
+			return undefined
 		}
 	}
 
