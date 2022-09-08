@@ -549,6 +549,9 @@ export default {
 					this.languageErrorMessage(this.requestedLanguagesForFolderLevel);
 				}
 			}
+			else {
+				this.waitingForTranslationResponse = false
+			}
 		},
 
 		async fieldLevelTranslationRequest(
@@ -604,6 +607,9 @@ export default {
 						} else {
 							this.languageErrorMessage(requestedLanguage);
 						}
+					}
+					else {
+						this.waitingForTranslationResponse = false
 					}
 				}
 			);
