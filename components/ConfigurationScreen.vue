@@ -183,6 +183,9 @@ export default {
 							if (index === updatedValues.length - 1) {
 								this.waitingForResponse = false
 								this.successMessage('Configuration(s) updated.');
+								setTimeout(() => {
+									this.closeSettings()
+								}, 1000);
 							}
 
 							switch (datasourceEntry.name) {
