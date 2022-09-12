@@ -139,6 +139,7 @@
 </template>
 
 <script>
+import { xml2json, json2xml, xml2js } from "xml-js";
 import { deepLTranslate } from "./../utils/deepl-services";
 import {
 	fetchStory,
@@ -207,8 +208,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -218,8 +219,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
 					height: 550,
 				},
@@ -356,12 +357,56 @@ export default {
 		// 	return str;
 		// },
 
+		convertingObjToArr(json) { //check each 'content' and convert it into array if already not
+			for (var key in json) {
+				console.log('key', key, json[key])
+			}
+		},
+
+		fixingStrings(json) { //conversion from xml to json creates string as object with key _text, this function reverses that to match the storyblok json
+			for (var key in json) {
+				console.log('key', key, typeof json[key], json[key]._text)
+				if (typeof json[key] == 'object' && json[key]._text) {
+					console.log('key identified', key)
+				}
+				else {
+					this.fixingStrings(json[key])
+				}
+			}
+		},
+		correctingJson(json) {
+			this.convertingObjToArr(json)
+		},
+
+		richTextJsonToXml(json) {
+			console.log('json', JSON.parse(json))
+			// var result1 = convert.json2xml(json, { compact: true, spaces: 4 });
+			// var result2 = convert.json2xml(json, { compact: false, spaces: 4 });
+			// var result1 = convert.json2xml(json);
+			// var result2 = convert.json2xml(json);
+			// console.log(result1, '\n', result2);
+			var _json = '{"name":{"_text":"Ali"},"age":{"_text":"30"}}';
+			// var options = { compact: true, textFn: function (val, elementName) { return elementName === 'age' ? val + '' : '' } };
+			// var result = convert.json2xml(json, options);
+			var options = { compact: true };
+			// var result = convert.json2xml((_json));
+			var resultJson = json2xml(json, { compact: true, });
+			var resultXml = xml2js(`<root>${resultJson}</root>`, { compact: true, });
+			// console.log('resultJson', resultJson)
+			// this.correctingJson(resultXml.root)
+			this.fixingStrings(resultXml.root)
+			console.log('resultXml', resultXml)
+		},
+
 		generateXML(obj) {
 			let str = "";
 
 			for (let key in obj) {
-				if (!key.includes('richtext') && !key.includes('color') && !key.includes('style') && !key.includes('size'))
+				// if (!key.includes('richtext') && !key.includes('color') && !key.includes('style') && !key.includes('size'))
+				if (!key.includes('richtext:text'))
 					str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
+				else
+					this.richTextJsonToXml(obj[key])
 			}
 
 			return str;
@@ -529,25 +574,26 @@ export default {
 					url: storyJson.url,
 				};
 
+				console.log('convertedXML', convertedXml)
 
-				storyObject = await updateStory(
-					this.spaceId,
-					this.story.id,
-					JSON.stringify(convertedXml)
-				); // folder level
+				// storyObject = await updateStory(
+				// 	this.spaceId,
+				// 	this.story.id,
+				// 	JSON.stringify(convertedXml)
+				// ); // folder level
 
-				if (storyObject) {
-					this.successMessage();
+				// if (storyObject) {
+				// 	this.successMessage();
 
-					this.updateWorkFlowStatusOfStory();
+				// 	this.updateWorkFlowStatusOfStory();
 
-					window.open(
-						`${document.referrer}#!/me/spaces/${this.spaceId}/stories/0/0/${this.story.id}?update=true`
-					);
-					this.closePage();
-				} else {
-					this.languageErrorMessage(this.requestedLanguagesForFolderLevel);
-				}
+				// 	window.open(
+				// 		`${document.referrer}#!/me/spaces/${this.spaceId}/stories/0/0/${this.story.id}?update=true`
+				// 	);
+				// 	this.closePage();
+				// } else {
+				// 	this.languageErrorMessage(this.requestedLanguagesForFolderLevel);
+				// }
 			}
 			else {
 				this.waitingForTranslationResponse = false
@@ -615,6 +661,8 @@ export default {
 			);
 		},
 
+
+
 		async sendTranslationRequest() {
 			if (
 				this.requestedLanguagesForFieldLevel.length > 0 ||
@@ -641,12 +689,14 @@ export default {
 
 					if (this.modeOfTranslation === FOLDER_LEVEL) {
 
-						this.folderLevelTranslationRequest(
-							storyObject,
-							updatedStory.storyJSON,
-							this.generateXML(updatedStory.storyJSON), // converting json to xml
-							sourceLanguage
-						);
+						// this.generateXML()1
+						this.richTextJsonToXml(updatedStory.storyJSON['48da15cb-fd2b-422d-9d03-c977c35ce798:image-text-section:richtext:text'])
+						// this.folderLevelTranslationRequest(
+						// 	storyObject,
+						// 	updatedStory.storyJSON,
+						// 	this.generateXML(updatedStory.storyJSON), // converting json to xml
+						// 	sourceLanguage
+						// );
 					}
 					else {
 
