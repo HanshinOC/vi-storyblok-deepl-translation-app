@@ -81,17 +81,17 @@ export const deepLTranslate = async (text, targetLanguage, sourceLanguage, deepL
 				auth_key: deepLKey,
 				tag_handling: 'xml',
 				split_sentences: '1',
-				preserve_formatting: '1'
+				preserve_formatting: '1',
+				ignore_tags: 'type'
 			});
 
 			return response.data;
 		} catch (e) {
-			returnErrorMessage(e.response.status);
+			if (e.response.status)
+				returnErrorMessage(e.response.status);
+			else
+				returnErrorMessage(undefined);
 			return undefined;
-		}
-		finally {
-			returnErrorMessage(undefined);
-			return undefined
 		}
 	}
 
