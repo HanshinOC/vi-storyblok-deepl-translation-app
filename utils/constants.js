@@ -12,3 +12,5 @@ export const API_KEY_DATASOURCE_NAME = 'Deepl-Api-key';
 
 export const WORKFLOW_STATUS_DATASOURCE_NAME = 'WorkFlow-Status-After-Translation';
 export const WORKFLOW_STATUS_INITIAL_VALUE = 'No Status Change';
+
+export const keysToIgnore = ['color', 'style', 'size', 'alignment', 'cols', 'layout', 'background', 'width', 'level']

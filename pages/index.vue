@@ -139,6 +139,7 @@
 </template>
 
 <script>
+import { xml2json, json2xml, xml2js } from "xml-js";
 import { deepLTranslate } from "./../utils/deepl-services";
 import {
 	fetchStory,
@@ -154,6 +155,7 @@ import {
 	API_KEY_INITIAL_VALUE,
 	FIELD_LEVEL,
 	FOLDER_LEVEL,
+	keysToIgnore,
 	MODE_DATASOURCE_NAME,
 	MODE_INITIAL_VALUE,
 	WORKFLOW_STATUS_DATASOURCE_NAME,
@@ -207,8 +209,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "getContext",
 				},
 				"https://app.storyblok.com"
@@ -218,8 +220,8 @@ export default {
 			window.parent.postMessage(
 				{
 					action: "tool-changed",
-					tool: "virtual-identity-ag@auto-translations-app",
-					// tool: "virtual-identity-ag@translations-backup-app",
+					// tool: "virtual-identity-ag@auto-translations-app",
+					tool: "virtual-identity-ag@translations-backup-app",
 					event: "heightChange",
 					height: 550,
 				},
@@ -346,45 +348,6 @@ export default {
 			);
 		},
 
-		// generateXML(obj) {
-		// 	let str = "";
-
-		// 	for (let key in obj) {
-		// 		str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
-		// 	}
-
-		// 	return str;
-		// },
-
-		generateXML(obj) {
-			let str = "";
-
-			for (let key in obj) {
-				if (!key.includes('richtext') && !key.includes('color') && !key.includes('style') && !key.includes('size'))
-					str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
-			}
-
-			return str;
-		},
-
-		convertXMLToJSON(xml, extractedFields) {
-			let obj = {};
-
-			for (let key in extractedFields) {
-				let _key = xml.substring(xml.indexOf("<") + 1, xml.indexOf(">"));
-				let _value = xml.substring(xml.indexOf(">") + 1, xml.indexOf("</"));
-
-				xml = xml.substring(xml.indexOf("><") + 1, xml.length);
-
-				let removed = JSON.stringify(_value).replace(`"\"`, `"`);
-				removed = removed.replace(`\""`, `"`);
-
-				Object.assign(obj, { [_key]: _value });
-			}
-
-			return obj;
-		},
-
 		// extracts the fields from story object with the help of story json returned by export.json api
 		extractingFields(storyJson, storyObject) {
 			let translatableContents = {};
@@ -478,6 +441,120 @@ export default {
 			return translatableContents;
 		},
 
+
+		richTextJsonToXml(json) {
+			return json2xml(json, { compact: true, });
+		},
+
+		generateXML(obj) {
+			let str = "";
+			for (let key in obj) {
+				if (!keysToIgnore.some(item => key.includes(item))) {
+					if (!key.includes('richtext:text'))
+						str += `${"<" + [key] + ">" + [obj[key]] + "</" + [key] + ">"}`;
+					else
+						str += `${"<" + [key] + ">" + [this.richTextJsonToXml(obj[key])] + "</" + [key] + ">"}`;
+				}
+			}
+			return str;
+		},
+
+		convertingObjToArr(json) { //check each 'content' and convert it into array if already not
+			if (json.content) {
+				if (!Array.isArray(json.content) && typeof json.content === 'object') {
+					const newArr = []
+					const newObj = {}
+
+					for (const [key, value] of Object.entries(json.content)) {
+						Object.assign(newObj, { [key]: value })
+					}
+
+					newArr.push(newObj)
+
+					delete json.content
+
+					Object.assign(json, { content: newArr })
+					this.convertingObjToArr(json)
+				}
+				else {
+					if (Array.isArray(json.content))
+						json.content.map(item => { this.convertingObjToArr(item) });
+				}
+			}
+			return json;
+		},
+
+		fixingMarks(json) { //check each 'mark' and convert it into array if already not
+			if (JSON.stringify(json).includes('marks')) {
+				json.forEach(element => {
+					if (JSON.stringify(element).includes('marks')) {
+						if (element.content)
+							this.fixingMarks(element.content)
+						else {
+							if (element.marks) {
+								if (!Array.isArray(element.marks) && typeof element.marks === 'object') {
+									const newArr = []
+									const newObj = {}
+
+									for (const [key, value] of Object.entries(element.marks)) {
+										Object.assign(newObj, { [key]: value })
+									}
+
+									newArr.push(newObj)
+									delete element.marks
+									Object.assign(element, { marks: newArr })
+								}
+							}
+						}
+					}
+				});
+			}
+			return json
+		},
+
+		fixingStrings(json) { //conversion from xml to json creates string as object with key _text, this function reverses that to match the storyblok json
+			for (var key in json) {
+				if (!Array.isArray(json[key]) && typeof json[key] == 'object' && json[key]._text) {
+					const textString = json[key]._text
+					delete json[key]
+					Object.assign(json, { [key]: textString })
+				}
+				else {
+					this.fixingStrings(json[key])
+				}
+			}
+			return json
+		},
+
+		richTextXmlToJon(xml) {
+			const resultXml = xml2js(`<root>${xml}</root>`, { compact: true });
+			const fixingContentObj = this.convertingObjToArr(resultXml.root)
+			const fixedStr = this.fixingStrings({ ...fixingContentObj, content: this.fixingMarks(fixingContentObj.content) })
+			return fixedStr
+		},
+		convertXMLToJSON(xml, extractedFields) {
+			let obj = {};
+
+			for (let key in extractedFields) {
+				if (!keysToIgnore.some(item => key.includes(item))) {
+					let _key = xml.substring(xml.indexOf("<") + 1, xml.indexOf(">"));
+					let _value = xml.substring(xml.indexOf(_key + ">") + _key.length + 1, xml.indexOf("</" + _key));
+
+					if (_key.includes('richtext:text'))
+						_value = JSON.stringify(this.richTextXmlToJon(_value))
+
+					xml = xml.substring(xml.indexOf(`</${_key}><`) + _key.length + 3, xml.length);
+
+					Object.assign(obj, { [_key]: _value });
+				}
+				else {
+					Object.assign(obj, { [key]: extractedFields[key] });
+				}
+			}
+
+			return obj;
+		},
+
 		// storyJsonWithLang only contains the translatable fields
 		// both objects are being compared and those keys which are not present in storyJsonWithLang are being removed from storyJson
 		removeUnwanted(storyJson, storyJsonWithLang) {
@@ -528,7 +605,6 @@ export default {
 					text_nodes: JSON.parse(storyJson.text_nodes),
 					url: storyJson.url,
 				};
-
 
 				storyObject = await updateStory(
 					this.spaceId,
@@ -615,6 +691,8 @@ export default {
 			);
 		},
 
+
+
 		async sendTranslationRequest() {
 			if (
 				this.requestedLanguagesForFieldLevel.length > 0 ||
@@ -640,7 +718,6 @@ export default {
 
 
 					if (this.modeOfTranslation === FOLDER_LEVEL) {
-
 						this.folderLevelTranslationRequest(
 							storyObject,
 							updatedStory.storyJSON,

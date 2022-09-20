@@ -14,7 +14,8 @@
     "deepl": "^1.0.13",
     "element-ui": "^2.15.9",
     "nuxt": "^2.15.7",
-    "storyblok-js-client": "^4.5.0"
+    "storyblok-js-client": "^4.5.0",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "storyblok-nuxt": "^2.0.1"
